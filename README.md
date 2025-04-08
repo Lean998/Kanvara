@@ -1,4 +1,5 @@
-<<<<<<< HEAD
+
+                                                                                                                                
 # CodeIgniter 4 Application Starter
 
 ## What is CodeIgniter?
@@ -70,4 +71,4 @@ Additionally, make sure that the following extensions are enabled in your PHP:
 =======
 # Kanvara
 Practico integrador de la materia Técnicas y Herramientas para el desarrollo Web con calidad
->>>>>>> 986c179b718a847bcbbb64a310e24d1b86a2c7de
+
