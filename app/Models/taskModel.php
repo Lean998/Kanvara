@@ -5,6 +5,8 @@
   class TaskModel extends Model{
     protected $table = 'tasks';
     protected $primaryKey = 'task_id';
+    protected $useAutoIncrement = true;
+    protected $returnType = 'array';
     protected $createdField = 'task_created';
     protected $allowedFields = [
       'task_title', 
@@ -17,7 +19,7 @@
       'task_archived',
       'user_id'
     ];
-
+    protected $dateFormat = 'datetime';
     protected $useTimestamps = true;
   }
 ?>

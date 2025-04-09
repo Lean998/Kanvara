@@ -5,6 +5,9 @@
   class SubTaskModel extends Model {
     protected $table = 'subtasks';
     protected $primaryKey = 'subtask_id';
+    protected $useAutoIncrement = true;
+    protected $returnType = 'array';
+    protected $dateFormat = 'datetime';
     protected $allowedFields = [
       'subtask_desc',
       'subtask_state',
