@@ -8,6 +8,7 @@
 </head>
 <body>
     <?= $this->include('plantilla/navbar') ?>
+    <?php echo $this->renderSection('botones'); ?>
     <?php echo $this->renderSection('contenido'); ?>
 
     <footer>
