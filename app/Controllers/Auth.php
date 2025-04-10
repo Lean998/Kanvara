@@ -2,7 +2,6 @@
   namespace App\Controllers;
   use CodeIgniter\Controller;
   use App\Models\UserModel;
-  use App\Config\Services;
 
   class Auth extends Controller {
     public function getRegister (){
@@ -37,13 +36,13 @@
     }
 
     public function postUserAuthenticate (){
-      $validation = services('validation');
+      $validation = service('validation');
       $validation->setRules([
         'email' => 'required|valid_email',
         'password' => 'required|min_length[6]'
       ]);
       
-      if(!$validation->withRequest($this->request())->run()){
+      if(!$validation->withRequest($this->request)->run()){
         return redirect()->back()->withInput()->with('errors', $validation->getErrors());
       }
       $email = $this->request->getPost('email');
