@@ -34,5 +34,28 @@
     ];
     protected $dateFormat = 'datetime';
     protected $useTimestamps = true;
+
+    public function obtenerTarea($tareaId){
+      $task = $this-> where ('task_id', $tareaId) -> first();
+
+      if(!$task){
+        return null;
+      }
+
+      $subTaskModeel = new SubTaskModel();
+      $task['subtasks'] = $subTaskModeel -> where('task_id', $tareaId) -> findAll();
+      return $task;
+    }
+    public function obtenerTareas($userId){
+    
+      $tasks = $this -> where ('user_id', $userId) -> where ('task_archived',0) -> orderBy ('task_expiry', 'ASC') -> findAll();
+      $subTaskModel = new SubTaskModel();
+
+      foreach ($tasks as $index => $task) {
+        $tasks[$index]['subtasks'] = $subTaskModel -> where('task_id', $task['task_id']) -> findAll();
+      }
+
+      return $tasks;
+    }
   }
 ?>
