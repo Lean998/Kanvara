@@ -17,25 +17,29 @@ let taskAEliminar = null;
 
     const taskIdElim = taskAEliminar.dataset.taskId;
 
-    fetch('tareas/eliminar', {
+    fetch(`${BASE_URL}tareas/eliminar`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
       body: `task_id=${encodeURIComponent(taskIdElim)}`
     })
+    
     .then(res => res.json())
     .then(data => {
       if (data.success) {
-        mostrarMensaje('mensaje-tareas', '✅ Tarea eliminada correctamente.', 'success');
+        mostrarMensaje('mensaje-success', '✅ Tarea eliminada correctamente.', 'success');
         taskAEliminar.closest('.card').remove();
+        setTimeout(() => {
+          window.location.href = `${BASE_URL}`; 
+        }, 500);
       } else {
-        mostrarMensaje('mensaje-tareas', '❌ Error al eliminar la tarea.', 'danger');
+        mostrarMensaje('mensaje-success', '❌ Error al eliminar la tarea.', 'danger');
       }
     })
     .catch(err => {
       console.error(err);
-      mostrarMensaje('mensaje-tareas', '❌ Error en la petición.', 'danger');
+      mostrarMensaje('mensaje-success', '❌ Error en la petición.', 'danger');
     });
 
     const modal = bootstrap.Modal.getInstance(document.getElementById('confirmarEliminarModal'));
@@ -49,7 +53,7 @@ document.querySelectorAll('.btn-editar').forEach(btn => {
     const taskId = this.dataset.taskId;
     tareaEditar = this.closest('.card');
 
-    fetch(`tareas/tarea/${taskId}`)
+    fetch(`${BASE_URL}tareas/tarea/${taskId}`)
       .then(res => res.json())
       .then(task => {
         const modal = new bootstrap.Modal(document.getElementById('confirmarEditarModal'));
@@ -87,7 +91,7 @@ document.getElementById('btnConfirmarEditar').addEventListener('click', function
 
   const formData = new FormData(form);
 
-  fetch('tareas/editar', {
+  fetch(`${BASE_URL}tareas/editar`, {
     method: 'POST',
     body: new URLSearchParams(formData)
   })
