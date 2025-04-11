@@ -6,6 +6,22 @@
       
     }
 
+    public function getVer($taskId){
+      $taskModel = new TaskModel();
+      $task = $taskModel->obtenerTarea($taskId);
+
+      if(!$task || $task == null){
+        return $this->response->setJSON(['success' => false, 'message' => 'Tarea no encontrada']);
+      }
+
+      $data = [
+        'titulo' => 'Tarea',
+        'task' => $task
+      ];
+
+      return view('tarea/task', $data);
+    }
+
     public function getTarea($taskId){
       $taskModel = new TaskModel();
       $task = $taskModel->obtenerTarea($taskId);
@@ -14,9 +30,8 @@
         return $this->response->setJSON(['success' => false, 'message' => 'Tarea no encontrada']);
       }
 
-      return $this->response->setJSON($task);
+      return $this->response->setJSON($task); 
     }
-
     public function postArchivar(){
       $id = $this->request->getPost('task_id');
       
@@ -61,7 +76,6 @@
       $taskModel = new TaskModel();
 
       $deleted = $taskModel->delete($taskId);
-
       return $this->response->setJSON(['success' => $deleted]);
     }
     
@@ -107,7 +121,7 @@
       $taskModel = new TaskModel();
       $taskModel->save($data);
 
-      return redirect()->to('/tareas')->with('success', 'Tarea creada correctamente.');
+      return redirect()->to('')->with('success', 'Tarea creada correctamente.');
   }
 }
 ?>
