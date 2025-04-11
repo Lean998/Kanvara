@@ -14,7 +14,7 @@
 </div>
 <!-- Modal -->
 <div class="modal fade" id="newTask" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
         <h1 class="modal-title fs-5" id="newTaskLabel">Nueva Tarea</h1>
@@ -41,6 +41,18 @@
           
           <div class="row mb-3">
             <div class="col-md-6">
+              <label for="subtaskState" class="form-label">Estado:</label>
+              <select name="subtaskState" id="subtaskState" class="form-select" required>
+                <option value="Definido" <?= old('subtaskState') === 'Definido' ? 'selected' : '' ?>>Definido</option>
+                <option value="En proceso" <?= old('subtaskState') === 'En proceso' ? 'selected' : '' ?>>En proceso</option>
+                <option value="Completada" <?= old('subtaskState') === 'Completada' ? 'selected' : '' ?>>Completada</option>
+              </select>
+              <div class="invalid-feedback">
+                <?= session('errors.subtaskState') ?? '' ?>
+              </div>
+            </div>
+
+            <div class="col-md-6">
               <label for="taskPriority" class="form-label">Prioridad:</label>
               <select name="taskPriority" id="taskPriority" class="form-select">
                 <option value="baja" <?= old('taskPriority') === 'baja' ? 'selected' : '' ?>>Baja</option>
@@ -52,6 +64,24 @@
               </div>
             </div>
             
+          </div>
+          <div class="form-check mb-3">
+            <input type="checkbox" class="form-check-input bg-input" id="taskReminder" name="taskReminder" value="<?= old('taskReminder') ?>">
+            <label class="form-check-label mx-2" for="taskReminder">Agregar recordatorio</label>
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <div class="row mb-3 additional-fields" style="display: none;">
+                <div>
+                  <label for="taskReminderDate" class="form-label">Fecha del recordatorio:</label>
+                  <input type="datetime-local" min="<?= date('Y-m-d') ?>" name="taskReminderDate" id="taskReminderDate" class="form-control <?= session('errors.taskReminderDate') ? 'is-invalid' : '' ?>" value="<?= old('taskReminderDate') ?>"><br>
+                  <div class="invalid-feedback">
+                    <?= session('errors.taskReminderDate') ?? '' ?>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div class="col-md-6">
               <label for="taskExpiry" class="form-label">Fecha limite:</label>
               <input type="datetime-local" min="<?= date('Y-m-d') ?>" name="taskExpiry" id="taskExpiry" class="form-control <?= session('errors.taskExpiry') ? 'is-invalid' : '' ?>" value="<?= old('taskExpiry') ?>" required><br>
@@ -59,23 +89,6 @@
                 <?= session('errors.taskExpiry') ?? '' ?>
               </div>
             </div>
-            
-          </div>
-          
-
-          <div class="form-check mb-3">
-                <input type="checkbox" class="form-check-input bg-input" id="taskReminder" name="taskReminder" value="<?= old('taskReminder') ?>">
-                <label class="form-check-label mx-2" for="taskReminder">Agregar recordatorio</label>
-          </div>
-
-          <div class="row mb-3 additional-fields" style="display: none;">
-              <div class="col-md-6">
-                <label for="taskReminderDate" class="form-label">Fecha del recordatorio:</label>
-                <input type="datetime-local" min="<?= date('Y-m-d') ?>" name="taskReminderDate" id="taskReminderDate" class="form-control <?= session('errors.taskReminderDate') ? 'is-invalid' : '' ?>" value="<?= old('taskReminderDate') ?>"><br>
-                <div class="invalid-feedback">
-                  <?= session('errors.taskReminderDate') ?? '' ?>
-                </div>
-              </div>
           </div>
 
           <div class="mb-3 col-md-4">
@@ -104,7 +117,7 @@
 
 <div class="container d-flex justify-content-between align-items-center my-2">
   <h2 class="text-center">Tus tareas</h2>
-  <button type="button" class="btn btn-primary m-2" data-bs-toggle="modal" data-bs-target="#newTask">
+  <button type="button" class="btn btn-primary m-2 rounded-3" data-bs-toggle="modal" data-bs-target="#newTask">
     Nueva Tarea
   </button>
 </div>
@@ -113,39 +126,42 @@
   <div id="mensaje-tareas" class="alert d-none" role="alert"></div>          
 </div>
 
-  <div class="container bg-dark p-3 rounded text-light ">
+  <div class="container bg-dark p-3 text-light rounded-3">
     <?php foreach ($tasks as $task): ?>
-    <div class="card mb-2 text-light p-3" style="background-color:<?= $task['task_color'] ?>">
-      <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 p-3">
-        <div class="d-flex flex-column justify-content-between">
-          <div>
-            <h5 class="mb-1"> <?= esc($task['task_title'])?></h5>
-            <p class="mb-1 text-break"><?= esc($task['task_desc']) ?></p>
-          </div>
-          <span class="badge bg-<?= $task['task_priority'] === 'Alta' ? 'danger' : ($task['task_priority'] === 'Media' ? 'warning' : 'success') ?> w-100 text-center mb-2"> <?= esc($task['task_priority'] . " ") ?> Prioridad</span>
-        </div>
+    
+      <div class="card mb-3 text-light p-3  rounded-3" style="background-color:<?= $task['task_color'] ?>">
+        <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 p-3">
+          <a href="tareas/ver/<?= $task['task_id']?>" style="text-decoration: none; color: inherit;">
+            <div class="d-flex flex-column justify-content-between">
+              <div>
+                <h5 class="mb-1"> <?= esc($task['task_title'])?></h5>
+                <p class="mb-1 text-break"><?= esc($task['task_desc']) ?></p>
+              </div>
+              <span class="badge bg-<?= $task['task_priority'] === 'Alta' ? 'danger' : ($task['task_priority'] === 'Media' ? 'warning' : 'success') ?> w-100 text-center mb-2"> <?= esc($task['task_priority'] . " ") ?> Prioridad</span>
+            </div>
+          </a>
 
-        <div class="w-50">
-          <h6 class="mb-2">Subtareas</h6>
-          <ul class="list-group list-group-flush">
-            <?php foreach ($task['subtasks'] as $sub): ?>
-              <li class="list-group-item bg-secondary text-light border-light p-1">
-                <?= esc($sub['title'] . ' ' . $sub['subtask_state']) ?>
-              </li>
-            <?php endforeach; ?>
-          </ul>
-        </div>
-          
-        <div class="d-flex flex-column align-items-center justify-content-between text-end">
-          <p class="mb-2">🕒 Vence: <strong> <?= esc($task['task_expiry']) ?> </strong></p>
-          <div class="btn-group mb-2" role="group">
-            <button class="btn btn-editar btn-sm btn-outline-light" data-task-id="<?= $task['task_id'] ?>" >✏️ Editar</button>
-            <button class="btn btn-eliminar btn-sm btn-outline-light" data-task-id="<?= $task['task_id'] ?>">🗑️ Eliminar</button>
-            <button class="btn btn-archivar btn-sm btn-outline-light" data-task-id="<?= $task['task_id'] ?>">📦 Archivar</button>
+          <div class="w-50">
+            <h6 class="mb-2">Subtareas</h6>
+            <ul class="list-group list-group-flush">
+              <?php foreach ($task['subtasks'] as $sub): ?>
+                <li class="list-group-item bg-secondary text-light border-light p-1">
+                  <?= esc($sub['title'] . ' ' . $sub['subtask_state']) ?>
+                </li>
+              <?php endforeach; ?>
+            </ul>
+          </div>
+            
+          <div class="d-flex flex-column align-items-center justify-content-between text-end">
+            <p class="mb-2">🕒 Vence: <strong> <?= esc($task['task_expiry']) ?> </strong></p>
+            <div class="btn-group mb-2" role="group">
+              <button class="btn btn-editar btn-sm btn-outline-light" data-task-id="<?= $task['task_id'] ?>" >✏️ Editar</button>
+              <button class="btn btn-eliminar btn-sm btn-outline-light" data-task-id="<?= $task['task_id'] ?>">🗑️ Eliminar</button>
+              <button class="btn btn-archivar btn-sm btn-outline-light" data-task-id="<?= $task['task_id'] ?>">📦 Archivar</button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
     <?php endforeach; ?>
   </div>
 
@@ -202,7 +218,9 @@
     </div>
   </div>
 </div>
-
+<script>
+  const BASE_URL = "<?= base_url() ?>";
+</script>
 <script src="<?= base_url('public/scripts/funcionesTarea.js') ?>"></script>
 
 <script>
