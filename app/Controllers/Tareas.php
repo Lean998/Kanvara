@@ -3,18 +3,67 @@
   use App\Models\TaskModel;
   class Tareas extends BaseController{
     public function getIndex (){
-      $data = [
-        'titulo' => 'Mi tarea',
-        'descripcion' => 'Tarea de prueba',
-        'vencimiento' => date('d-m-y'),
-      ];
-      return view('tarea/index', $data);
+      
     }
 
-    public function getVerTarea(){
-      echo '<h2> Datos de la tarea </h2>';
+    public function getTarea($taskId){
+      $taskModel = new TaskModel();
+      $task = $taskModel->obtenerTarea($taskId);
+
+      if(!$task || $task == null){
+        return $this->response->setJSON(['success' => false, 'message' => 'Tarea no encontrada']);
+      }
+
+      return $this->response->setJSON($task);
     }
 
+    public function postArchivar(){
+      $id = $this->request->getPost('task_id');
+      
+      if (!$id) {
+        return $this->response->setJSON(['success' => false, 'message' => 'ID inválido']);
+      }
+
+      $taskModel = new TaskModel();
+      $actualizado = $taskModel->update($id, [
+          'task_archived' => '1'
+      ]);
+  
+      return $this->response->setJSON(['success' => $actualizado, 'message' => $actualizado ? 'Tarea archivada con éxito' : 'No se pudo archivar']);
+    }
+    public function postEditar(){
+      $id = $this->request->getPost('task_id');
+      $titulo = $this->request->getPost('task_title');
+      $fecha = $this->request->getPost('task_expiry');
+      $color = $this->request->getPost('task_color');
+
+      $taskModel = new TaskModel();
+      $actualizado = $taskModel->update($id, [
+          'task_title' => $titulo,
+          'task_expiry' => $fecha,
+          'task_color' => $color
+      ]);
+  
+      return $this->response->setJSON([
+          'success' => $actualizado,
+          'message' => $actualizado ? 'Tarea actualizada con éxito refresque para ver los cambios.' : 'No se pudo actualizar'
+      ]);
+    }
+
+    public function postEliminar(){
+
+      $taskId = $this->request->getPost('task_id');
+
+      if (!$taskId || !is_numeric($taskId)) {
+        return $this->response->setJSON(['success' => false, 'message' => 'Error al encontrar la tarea.']);
+      }
+
+      $taskModel = new TaskModel();
+
+      $deleted = $taskModel->delete($taskId);
+
+      return $this->response->setJSON(['success' => $deleted]);
+    }
     
     public function getNuevaTarea(){
       return view('tarea/newTask', ['titulo' => 'Nueva Tarea']);

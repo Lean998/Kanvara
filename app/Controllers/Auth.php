@@ -49,9 +49,10 @@
       $password = $this->request->getPost('password');
 
       $userModel = new UserModel();
-      $user = $userModel->where('user_email', $email)->first();
+      $user = $userModel->obtenerUsuarioEmail($email);
 
-      if (!$user || !password_verify($password, $user['user_password'])) {
+
+      if ($user == null || !$user || !password_verify($password, $user['user_password'])) {
         return redirect()->back()->withInput()->with('error', 'Email o contraseña incorrectos.');
       }
 
@@ -61,16 +62,16 @@
         'isLoggedIn' => true,
       ]);
 
-      return view('welcome_message', ['titulo' => 'Home']);
-      //return redirect()->to('/home/inicio');
+      //return view('welcome_message', ['titulo' => 'Home']);
+      return redirect()->to('');
       
     }
 
     public function getLogOut (){
       session()->destroy();
+      session_destroy();
       $_SESSION = null;
       return view('auth/login');
-      //return redirect()->to('/home/inicio');
     }
   } 
 ?>
