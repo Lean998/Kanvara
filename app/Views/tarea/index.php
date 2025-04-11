@@ -1,13 +1,12 @@
 
 <?= $this->extend('plantilla/layout')?>
 <?= $this->section('botones') ?>
-<button type="button" class="btn btn-primary m-2" data-bs-toggle="modal" data-bs-target="#newTask">
-  Nueva Tarea
-</button>
 
-<?php if (session('success')): ?>
-            <div class="alert alert-success"><?= session('success') ?></div>
-<?php endif; ?>
+
+
+<div class="container">
+  <div id="mensaje-success" class="alert d-none" role="alert"></div>         
+</div>
 <!-- Modal -->
 <div class="modal fade" id="newTask" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -97,104 +96,110 @@
 </div>
 <?= $this->endSection() ?>
 <?= $this->section('contenido') ?>
-    <h2 class="mb-4">Tus tareas</h2>
 
-    <div class="container bg-dark p-4 rounded text-light ">
-      <!-- Tarea 1 -->
-      <div class="card mb-3 bg-secondary text-light p-3">
-        <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 p-3">
-          <!-- Izquierda: Info principal -->
-          <div class="d-flex flex-column justify-content-between">
-            <div>
-              <h5 class="mb-1">💻 Terminar proyecto Kanbara</h5>
-              <p class="mb-1 text-break">Completar funcionalidades esenciales.</p>
-            </div>
-            <span class="badge bg-danger w-100 text-center mb-2">Alta prioridad</span>
+<div class="container d-flex justify-content-between align-items-center my-2">
+  <h2 class="text-center">Tus tareas</h2>
+  <button type="button" class="btn btn-primary m-2" data-bs-toggle="modal" data-bs-target="#newTask">
+    Nueva Tarea
+  </button>
+</div>
+
+<div class="container">
+  <div id="mensaje-tareas" class="alert d-none" role="alert"></div>          
+</div>
+
+  <div class="container bg-dark p-3 rounded text-light ">
+    <?php foreach ($tasks as $task): ?>
+    <div class="card mb-2 text-light p-3" style="background-color:<?= $task['task_color'] ?>">
+      <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 p-3">
+        <div class="d-flex flex-column justify-content-between">
+          <div>
+            <h5 class="mb-1"> <?= esc($task['task_title'])?></h5>
+            <p class="mb-1 text-break"><?= esc($task['task_desc']) ?></p>
           </div>
-          <!-- Centro: Subtareas -->
-          <div class="w-50">
-            <h6 class="mb-2">Subtareas</h6>
-            <ul class="list-group list-group-flush">
-              <li class="list-group-item bg-secondary text-light border-light p-1">✔️ Validar formulario</li>
-              <li class="list-group-item bg-secondary text-light border-light p-1">📝 Crear vista de listado</li>
-              <li class="list-group-item bg-secondary text-light border-light p-1">🔔 Agregar recordatorio</li>
-              <li class="list-group-item bg-secondary text-light border-light p-1">📁 Adjuntar archivo</li>
-            </ul>
-          </div>
-          <!-- Derecha: Fecha y botones -->
-          <div class="d-flex flex-column align-items-center justify-content-between text-end">
-            <p class="mb-2">🕒 Vence: <strong>2025-04-20 23:59</strong></p>
-            <div class="btn-group mb-2" role="group">
-              <button class="btn btn-sm btn-outline-light">✏️ Editar</button>
-              <button class="btn btn-sm btn-outline-light">🗑️ Eliminar</button>
-              <button class="btn btn-sm btn-outline-light">📦 Archivar</button>
-            </div>
-          </div>
+          <span class="badge bg-<?= $task['task_priority'] === 'Alta' ? 'danger' : ($task['task_priority'] === 'Media' ? 'warning' : 'success') ?> w-100 text-center mb-2"> <?= esc($task['task_priority'] . " ") ?> Prioridad</span>
         </div>
-      </div>
 
-      <div class="card mb-3 bg-secondary text-light p-3">
-        <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 p-3">
-          <!-- Izquierda: Info principal -->
-          <div class="d-flex flex-column justify-content-between">
-            <div>
-              <h5 class="mb-1">🛒 Hacer las compras</h5>
-              <p class="mb-1 text-break">Comprar comida y útiles para la semana.</p>
-            </div>
-            <span class="badge bg-warning w-100 text-center mb-2">Prioridad: Normal</span>
-          </div>
-          <!-- Centro: Subtareas -->
-          <div class="w-50">
-            <h6 class="mb-2">Subtareas</h6>
-            <ul class="list-group list-group-flush">
-              <li class="list-group-item bg-secondary text-light border-light p-1">✔️ Comprar verduras</li>
-              <li class="list-group-item bg-secondary text-light border-light p-1">📝 Comprar articulos de limpieza</li>
-            </ul>
-          </div>
-          <!-- Derecha: Fecha y botones -->
-          <div class="d-flex flex-column align-items-center  text-end">
-            <p class="mb-2">🕒 Vence: <strong>2025-04-12 20:00</strong></p>
-            <div class="btn-group mb-2" role="group">
-              <button class="btn btn-sm btn-outline-light">✏️ Editar</button>
-              <button class="btn btn-sm btn-outline-light">🗑️ Eliminar</button>
-              <button class="btn btn-sm btn-outline-light">📦 Archivar</button>
-            </div>
-          </div>
+        <div class="w-50">
+          <h6 class="mb-2">Subtareas</h6>
+          <ul class="list-group list-group-flush">
+            <?php foreach ($task['subtasks'] as $sub): ?>
+              <li class="list-group-item bg-secondary text-light border-light p-1">
+                <?= esc($sub['title'] . ' ' . $sub['subtask_state']) ?>
+              </li>
+            <?php endforeach; ?>
+          </ul>
         </div>
-      </div>
-
-      <div class="card mb-3 bg-secondary text-light p-3">
-        <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 p-3">
-          <!-- Izquierda: Info principal -->
-          <div class="d-flex flex-column justify-content-between">
-            <div>
-              <h5 class="mb-1">🧠 Rutina de aim</h5>
-              <p class="mb-1 text-break">
-                <!-- Este párrafo puede quedar vacío sin afectar el layout -->
-              </p>
-            </div>
-            <span class="badge bg-info w-100 text-center mb-2">Prioridad: Normal</span>
-          </div>
-          <!-- Centro: Subtareas -->
-          <div class="w-50">
-            <h6 class="mb-2">Subtareas</h6>
-            <ul class="list-group list-group-flush">
-              <li class="list-group-item bg-secondary text-light border-light p-1">Comprar verduras</li>
-              <li class="list-group-item bg-secondary text-light border-light p-1">Comprar verduras</li>
-            </ul>
-          </div>
-          <!-- Derecha: Fecha y botones -->
-          <div class="d-flex flex-column align-items-center  text-end">
-            <p class="mb-2">🕒 Vence: <strong>2025-04-12 20:00</strong></p>
-            <div class="btn-group mb-2" role="group">
-              <button class="btn btn-sm btn-outline-light">✏️ Editar</button>
-              <button class="btn btn-sm btn-outline-light">🗑️ Eliminar</button>
-              <button class="btn btn-sm btn-outline-light">📦 Archivar</button>
-            </div>
+          
+        <div class="d-flex flex-column align-items-center justify-content-between text-end">
+          <p class="mb-2">🕒 Vence: <strong> <?= esc($task['task_expiry']) ?> </strong></p>
+          <div class="btn-group mb-2" role="group">
+            <button class="btn btn-editar btn-sm btn-outline-light" data-task-id="<?= $task['task_id'] ?>" >✏️ Editar</button>
+            <button class="btn btn-eliminar btn-sm btn-outline-light" data-task-id="<?= $task['task_id'] ?>">🗑️ Eliminar</button>
+            <button class="btn btn-archivar btn-sm btn-outline-light" data-task-id="<?= $task['task_id'] ?>">📦 Archivar</button>
           </div>
         </div>
       </div>
     </div>
+    <?php endforeach; ?>
+  </div>
+
+  <div class="modal fade" id="confirmarEliminarModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">¿Eliminar tarea?</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        Esta acción no se puede deshacer. ¿Estás seguro que deseas eliminar esta tarea?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button id="btnConfirmarEliminar" type="button" class="btn btn-danger">Eliminar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="confirmarArchivarModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">¿Archivar tarea?</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        ¿Estás seguro que deseas archivar esta tarea?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button id="btnConfirmarArchivar" type="button" class="btn btn-primary">Archivar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="confirmarEditarModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Editar Tarea</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button id="btnConfirmarEditar" type="button" class="btn btn-primary">Editar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="<?= base_url('public/scripts/funcionesTarea.js') ?>"></script>
+
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     // Mostrar el modal si hay errores de validación
@@ -226,4 +231,11 @@
     checkbox.addEventListener('change', toggleReminderFields);
   });
 </script>
+
+<script>
+  <?php if (session('success')): ?>
+    mostrarMensaje('mensaje-success', <?= json_encode(session('success')) ?>, 'success');
+  <?php endif ?>
+</script>
+
 <?= $this->endSection() ?>
