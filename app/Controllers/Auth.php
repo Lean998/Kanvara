@@ -62,7 +62,6 @@
         'isLoggedIn' => true,
       ]);
 
-      //return view('welcome_message', ['titulo' => 'Home']);
       return redirect()->to('');
       
     }
