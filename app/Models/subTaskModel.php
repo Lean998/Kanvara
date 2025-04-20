@@ -5,6 +5,10 @@
   class SubTaskModel extends Model {
     protected $table = 'subtasks';
     protected $primaryKey = 'subtask_id';
+    protected $useAutoIncrement = true;
+    protected $returnType = 'array';
+    protected $dateFormat = 'datetime';
+
     protected $allowedFields = [
       'subtask_desc',
       'subtask_state',
@@ -15,7 +19,17 @@
       'task_id',
     ];
 
+    protected $validationRules = [
+      'subtask_desc'    => 'required|min_length[5]',
+      'subtask_priority' => 'permit_empty|in_list[Baja,Normal,Alta]',
+      'subtask_state' => 'required|in_list[Definida,En proceso,Completada]',
+      'subtask_expiry'    => 'required|valid_date',
+      'subtask_comment' => 'permit_empty|min_length[5]',
+      'user_id' => 'permit_empty',
+    ];
     protected $createdField = 'subtask_created';
+    protected $updatedField  = 'subtask_updated_at';
+    protected $deletedField  = 'subtask_deleted_at';  
     protected $useTimestamps = true;
   }
 ?>

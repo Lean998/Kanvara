@@ -5,7 +5,22 @@
   class TaskModel extends Model{
     protected $table = 'tasks';
     protected $primaryKey = 'task_id';
-    protected $createdField = 'task_created';
+    protected $useAutoIncrement = true;
+    protected $returnType = 'array';
+    protected $createdField = 'task_created_at';
+    protected $updatedField  = 'task_updated_at';
+    protected $deletedField  = 'task_deleted_at'; 
+
+    protected $validationRules = [
+      'task_title'          => 'required|min_length[5]',
+      'task_desc'    => 'required|min_length[10]|max_length[70]',
+      'task_priority' => 'required|in_list[Baja,Normal,Alta]',
+      'task_state' => 'required|in_list[Definida,En proceso,Completada]',
+      'task_expiry'    => 'required|valid_date',
+      'task_reminder'  => 'permit_empty|valid_date',
+      'task_archived' => 'permit_empty',
+      'task_color'          => 'required',
+    ];
     protected $allowedFields = [
       'task_title', 
       'task_desc',
@@ -17,7 +32,32 @@
       'task_archived',
       'user_id'
     ];
-
+    protected $dateFormat = 'datetime';
     protected $useTimestamps = true;
+
+    public function obtenerTarea($tareaId){
+      $task = $this-> where ('task_id', $tareaId) -> first();
+
+      if(!$task){
+        return null;
+      }
+
+      $subTaskModel = new SubTaskModel();
+      $collaborationModel = new CollaborationModel();
+      $task['subtasks'] = $subTaskModel -> where('task_id', $tareaId) -> findAll();
+      $task['colaboradores'] = $collaborationModel -> where ('tasK_id', $tareaId) -> findAll();
+      return $task;
+    }
+    public function obtenerTareas($userId){
+    
+      $tasks = $this -> where ('user_id', $userId) -> where ('task_archived',0) -> orderBy ('task_expiry', 'ASC') -> findAll();
+      $subTaskModel = new SubTaskModel();
+
+      foreach ($tasks as $index => $task) {
+        $tasks[$index]['subtasks'] = $subTaskModel -> where('task_id', $task['task_id']) -> findAll();
+      }
+
+      return $tasks;
+    }
   }
 ?>
