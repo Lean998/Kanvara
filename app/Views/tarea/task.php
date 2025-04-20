@@ -4,6 +4,7 @@
 }
 ?>
 
+
 <?= $this->extend('plantilla/layout')?>
 <?= $this->section('contenido') ?>
 
@@ -19,9 +20,7 @@
       <h3 class="mb-0"><?= esc($task['task_title']) ?></h3>
       <div class="text-end">
         <p class="mb-1">🕒 <strong>Vence:</strong> <?= date('d/m/Y', strtotime($task['task_expiry'])) ?></p>
-        <span class="badge bg-<?= $task['task_priority'] === 'Alta' ? 'danger' : ($task['task_priority'] === 'Media' ? 'warning' : 'success') ?>">
-          <?= esc($task['task_priority']) ?> Prioridad
-        </span>
+        <span class="badge bg-<?= $task['task_priority'] === 'Alta' ? 'danger' : ($task['task_priority'] === 'Media' ? 'warning' : 'success') ?> w-100 text-center mb-2"> Prioridad <?= esc( " ".$task['task_priority']) ?></span>
       </div>
     </div>
 
@@ -31,8 +30,8 @@
       <?php if (!empty($task['subtasks'])): ?>
         <ul class="list-group list-group-flush">
           <?php foreach ($task['subtasks'] as $sub): ?>
-            <li class="list-group-item bg-secondary text-light border-light p-2 d-flex justify-content-between align-items-center">
-              <?= esc($sub['title']) ?>
+            <li class="list-group-item text-light border-light p-2 d-flex justify-content-between align-items-center" style="background-color:<?= $task['task_color'] ?>">
+              <?= esc($sub['subtask_desc']) ?>
               <span><?= esc($sub['subtask_state']) ?></span>
             </li>
           <?php endforeach; ?>
@@ -49,14 +48,16 @@
         <p class="text-break mb-0"><?= esc($task['task_desc']) ?></p>
       </div>
       <div>
-        <h5>🕒 Recordatorio</h5>
-        <p class="mb-0"><?= date('d/m/Y', strtotime($task['task_reminder'])) ?></p>
+        <?php if ($task['task_reminder'] != null ): ?>
+          <h5>🕒 Recordatorio</h5>
+          <p class="mb-0"><?= date('d/m/Y', strtotime($task['task_reminder'])) ?></p>
+        <?php endif; ?>
       </div>
       <div class="btn-group bg-light rounded" role="group">
         <button class="btn btn-editar btn-sm btn-outline-dark" data-task-id="<?= $task['task_id'] ?>">✏️ Editar</button>
         <button class="btn btn-eliminar btn-sm btn-outline-dark" data-task-id="<?= $task['task_id'] ?>">🗑️ Eliminar</button>
         <button class="btn btn-archivar btn-sm btn-outline-dark" data-task-id="<?= $task['task_id'] ?>">📦 Archivar</button>
-        <button class="btn btn-newSubtask btn-sm btn-outline-dark" data-task-id="<?= $task['task_id'] ?>">&#10133; Nueva Subtarea</button>
+        <button class="btn btn-newSubtask btn-sm btn-outline-dark" data-bs-toggle="modal" data-bs-target="#newSubtask" data-task-id="<?= $task['task_id'] ?>">&#10133; Nueva Subtarea</button>
       </div>
     </div>
 
@@ -126,16 +127,8 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form action='subtareas/crear-subtarea' id="subtaskCreateForm" method="post" class="container mt-4 p-3 border rounded shadow-sm bg-light">
+        <form action="<?= base_url()?>subtask/crear-subtarea"  method="post" id="subtaskCreateForm"  class="container mt-4 p-3 border rounded shadow-sm bg-light">
           <?= csrf_field() ?>
-          <div class="mb-3">
-            <label for="subtaskTitle" class="form-label">Titulo:</label>
-            <input type="text" name="subtaskTitle" id="subtaskTitle" class="form-control <?= session('errors.subtaskTitle') ? 'is-invalid' : '' ?>" value="<?= old('subtaskTitle') ?>" required><br>
-            <div class="invalid-feedback">
-              <?= session('errors.subtaskTitle') ?? '' ?>
-            </div>
-          </div>
-
           <div class="mb-3">
             <label for="subtaskDesc" class="form-label">Descripcion:</label>
             <input type="text" name="subtaskDesc" id="subtaskDesc" class="form-control <?= session('errors.subtaskDesc') ? 'is-invalid' : '' ?>" value="<?= old('subtaskDesc') ?>" required><br>
@@ -147,9 +140,10 @@
           
           <div class="row mb-3">
             <div class="col-md-6">
-              <label for="subtaskState" class="form-label">Estado:</label>
+              <label for="subtaskState" class="form-label <?= session('errors.subtaskState') ? 'is-invalid' : '' ?>">Estado:</label>
               <select name="subtaskState" id="subtaskState" class="form-select" required>
-                <option value="Definido" <?= old('subtaskState') === 'Definido' ? 'selected' : '' ?>>Definido</option>
+                <option value="" <?= old('subtaskState') === '' ? 'selected' : '' ?>>Seleccione una opción</option>
+                <option value="Definida" <?= old('subtaskState') === 'Definida' ? 'selected' : '' ?>>Definida</option>
                 <option value="En proceso" <?= old('subtaskState') === 'En proceso' ? 'selected' : '' ?>>En proceso</option>
                 <option value="Completada" <?= old('subtaskState') === 'Completada' ? 'selected' : '' ?>>Completada</option>
               </select>
@@ -160,13 +154,13 @@
             
             <div class="col-md-6">
               <label for="taskPriority" class="form-label">Prioridad:</label>
-              <select name="taskPriority" id="taskPriority" class="form-select">
-                <option value="baja" <?= old('taskPriority') === 'baja' ? 'selected' : '' ?>>Baja</option>
-                <option value="normal" <?= old('taskPriority') === 'normal' ? 'selected' : '' ?>>Normal</option>
-                <option value="alta" <?= old('taskPriority') === 'alta' ? 'selected' : '' ?>>Alta</option>
+              <select name="subtaskPriority" id="subtaskPriority" class="form-select <?= session('errors.subtaskPriority') ? 'is-invalid' : '' ?>">
+                <option value="Baja" <?= old('subtaskPriority') === 'baja' ? 'selected' : '' ?>>Baja</option>
+                <option value="Normal" <?= old('subtaskPriority') === 'normal' ? 'selected' : '' ?>>Normal</option>
+                <option value="Alta" <?= old('subtaskPriority') === 'alta' ? 'selected' : '' ?>>Alta</option>
               </select>
               <div class="invalid-feedback">
-                <?= session('errors.taskPriority') ?? '' ?>
+                <?= session('errors.subtaskPriority') ?? '' ?>
               </div>
             </div>
           </div>
@@ -180,24 +174,31 @@
           </div>
 
           <div class="mb-3">
-            <label for="subtaskcomment" class="form-label">Comentario:</label>
-            <input type="text" name="subtaskcomment" id="subtaskcomment" class="form-control <?= session('errors.subtaskcomment') ? 'is-invalid' : '' ?>" value="<?= old('subtaskcomment') ?>" required><br>
+            <label for="subtaskComment" class="form-label">Comentario:</label>
+            <input type="text" name="subtaskComment" id="subtaskComment" class="form-control <?= session('errors.subtaskComment') ? 'is-invalid' : '' ?>" value="<?= old('subtaskComment') ?>" required><br>
             <div class="invalid-feedback">
-              <?= session('errors.subtaskcomment') ?? '' ?>
+              <?= session('errors.subtaskComment') ?? '' ?>
             </div>
           </div>
 
           <div>
-            <label for="taskresponsible" class="form-label">Prioridad:</label>
-            <select name="taskresponsible" id="taskresponsible" class="form-select" required>
-              <?php foreach($colaboradores as $colaborador): ?>
-                <option value="<?= $colaborador['user_id']?>"> <?= $colaborador['user_name'] ?></option>
-              <?php endforeach; ?>
-            </select>
+            <label for="subtaskResponsible" class="form-label">Responsable:</label>
+            <?php if(!empty($colab)): ?>
+              <select name="subtaskResponsible" id="subtaskResponsible" class="form-select <?= session('errors.subtaskResponsible') ? 'is-invalid' : '' ?>" required>
+                <?php foreach($colab as $colaborador): ?>
+                  <option value="<?= $colaborador['user_id']?>"> <?= $colaborador['user_name'] ?></option>
+                <?php endforeach; ?>
+              </select>
+              <?php  else : ?>
+              <p class="text-muted">Sin colaboradores</p>
+              <?php endif; ?>
             <div class="invalid-feedback">
-              <?= session('errors.taskresponsible') ?? '' ?>
+              <?= session('errors.subtaskResponsible') ?? '' ?>
             </div>
           </div>
+
+          
+            <input type="text" class="d-none" name="task_id" value="<?= $task['task_id'] ?>">
 
           <?php if (session('error')): ?>
             <div class="alert alert-danger"><?= session('error') ?></div>
