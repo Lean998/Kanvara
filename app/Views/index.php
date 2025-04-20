@@ -41,23 +41,24 @@
           
           <div class="row mb-3">
             <div class="col-md-6">
-              <label for="subtaskState" class="form-label">Estado:</label>
-              <select name="subtaskState" id="subtaskState" class="form-select" required>
-                <option value="Definido" <?= old('subtaskState') === 'Definido' ? 'selected' : '' ?>>Definido</option>
-                <option value="En proceso" <?= old('subtaskState') === 'En proceso' ? 'selected' : '' ?>>En proceso</option>
-                <option value="Completada" <?= old('subtaskState') === 'Completada' ? 'selected' : '' ?>>Completada</option>
+              <label for="taskState" class="form-label">Estado:</label>
+              <select name="taskState" id="taskState" class="form-select  <?= session('errors.taskState') ? 'is-invalid' : '' ?>">
+                <option value="" <?= old('taskState') === '' ? 'selected' : '' ?> disabled>Seleccione una opción</option>
+                <option value="Definida" <?= old('taskState') === 'Definida' ? 'selected' : '' ?>>Definida</option>
+                <option value="En proceso" <?= old('taskState') === 'En proceso' ? 'selected' : '' ?>>En proceso</option>
+                <option value="Completada" <?= old('taskState') === 'Completada' ? 'selected' : '' ?>>Completada</option>
               </select>
               <div class="invalid-feedback">
-                <?= session('errors.subtaskState') ?? '' ?>
+                <?= session('errors.taskState') ?? '' ?>
               </div>
             </div>
 
             <div class="col-md-6">
               <label for="taskPriority" class="form-label">Prioridad:</label>
-              <select name="taskPriority" id="taskPriority" class="form-select">
-                <option value="baja" <?= old('taskPriority') === 'baja' ? 'selected' : '' ?>>Baja</option>
-                <option value="normal" <?= old('taskPriority') === 'normal' ? 'selected' : '' ?>>Normal</option>
-                <option value="alta" <?= old('taskPriority') === 'alta' ? 'selected' : '' ?>>Alta</option>
+              <select name="taskPriority" id="taskPriority" class="form-select <?= session('errors.taskPriority') ? 'is-invalid' : '' ?>">
+                <option value="Baja" <?= old('taskPriority') === 'baja' ? 'selected' : '' ?>>Baja</option>
+                <option value="Normal" <?= old('taskPriority') === 'normal' ? 'selected' : '' ?>>Normal</option>
+                <option value="Alta" <?= old('taskPriority') === 'alta' ? 'selected' : '' ?>>Alta</option>
               </select>
               <div class="invalid-feedback">
                 <?= session('errors.taskPriority') ?? '' ?>
@@ -137,19 +138,21 @@
                 <h5 class="mb-1"> <?= esc($task['task_title'])?></h5>
                 <p class="mb-1 text-break"><?= esc($task['task_desc']) ?></p>
               </div>
-              <span class="badge bg-<?= $task['task_priority'] === 'Alta' ? 'danger' : ($task['task_priority'] === 'Media' ? 'warning' : 'success') ?> w-100 text-center mb-2"> <?= esc($task['task_priority'] . " ") ?> Prioridad</span>
+              <span class="badge bg-<?= $task['task_priority'] === 'Alta' ? 'danger' : ($task['task_priority'] === 'Media' ? 'warning' : 'success') ?> w-100 text-center mb-2"> Prioridad <?= esc( " ".$task['task_priority']) ?></span>
             </div>
           </a>
-
+          
           <div class="w-50">
             <h6 class="mb-2">Subtareas</h6>
+            <a href="tareas/ver/<?= $task['task_id']?>" style="text-decoration: none; color: inherit;">
             <ul class="list-group list-group-flush">
               <?php foreach ($task['subtasks'] as $sub): ?>
-                <li class="list-group-item bg-secondary text-light border-light p-1">
-                  <?= esc($sub['title'] . ' ' . $sub['subtask_state']) ?>
+                <li class="list-group-item  border-light p-1 text-light" style="background-color:<?= $task['task_color'] ?>">
+                  <?= esc($sub['subtask_desc'] . ' ' . $sub['subtask_state']) ?> 
                 </li>
               <?php endforeach; ?>
             </ul>
+            </a>
           </div>
             
           <div class="d-flex flex-column align-items-center justify-content-between text-end">
