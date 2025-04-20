@@ -13,9 +13,9 @@
 
     protected $validationRules = [
       'task_title'          => 'required|min_length[5]',
-      'task_desc'    => 'required|min_length[5]',
-      'task_priority' => 'required|in_list[baja,normal,alta]',
-      'task_state' => 'permit_empty',
+      'task_desc'    => 'required|min_length[10]|max_length[70]',
+      'task_priority' => 'required|in_list[Baja,Normal,Alta]',
+      'task_state' => 'required|in_list[Definida,En proceso,Completada]',
       'task_expiry'    => 'required|valid_date',
       'task_reminder'  => 'permit_empty|valid_date',
       'task_archived' => 'permit_empty',
@@ -42,8 +42,10 @@
         return null;
       }
 
-      $subTaskModeel = new SubTaskModel();
-      $task['subtasks'] = $subTaskModeel -> where('task_id', $tareaId) -> findAll();
+      $subTaskModel = new SubTaskModel();
+      $collaborationModel = new CollaborationModel();
+      $task['subtasks'] = $subTaskModel -> where('task_id', $tareaId) -> findAll();
+      $task['colaboradores'] = $collaborationModel -> where ('tasK_id', $tareaId) -> findAll();
       return $task;
     }
     public function obtenerTareas($userId){
