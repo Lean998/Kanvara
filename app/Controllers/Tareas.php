@@ -1,5 +1,6 @@
 <?php
   namespace App\Controllers;
+  use App\Models\CollaborationModel;
   use App\Models\TaskModel;
   class Tareas extends BaseController{
     public function getIndex (){
@@ -14,9 +15,13 @@
         return $this->response->setJSON(['success' => false, 'message' => 'Tarea no encontrada']);
       }
 
+      $collab = new CollaborationModel();
+      
+
       $data = [
         'titulo' => 'Tarea',
-        'task' => $task
+        'task' => $task,
+        'colab' => $collab->getColaboradores($taskId),
       ];
 
       return view('tarea/task', $data);
@@ -87,9 +92,10 @@
     public function postCrearTarea() {	
     $validation = service('validation');
       $rules = [
-        'taskTitle' => 'required|min_length[5]|max_length[50]',
-        'taskDesc' => 'required|min_length[10]|max_length[50]',
-        'taskPriority' => 'required',
+        'taskTitle' => 'required|min_length[5]',
+        'taskDesc' => 'required|min_length[10]|max_length[70]',
+        'taskPriority' => 'required|in_list[Baja,Normal,Alta]',
+        'taskState' => 'required|in_list[Definida,En proceso,Completada]',
         'taskExpiry' => 'required|valid_date|future_date',
         'taskColor' => 'required',
         'taskReminderDate' => 'permit_empty|valid_date|future_date|before_date[taskExpiry]',
@@ -105,7 +111,7 @@
         'task_title' => $this->request->getPost('taskTitle'),
         'task_desc' => $this->request->getPost('taskDesc'),
         'task_priority' => $this->request->getPost('taskPriority'),
-        'task_state'=> 'En curso',
+        'task_state'=> $this->request->getPost('taskState'),
         'task_expiry' => $this->request->getPost('taskExpiry'),
         'task_color' => $this->request->getPost('taskColor'),
         'task_archived' => 0,
