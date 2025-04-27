@@ -8,6 +8,9 @@
 </head>
 <body class="bg-secondary">
     <?= $this->include('plantilla/navbar') ?>
+    <div class="container my-3">
+        <div id="mensaje-success" class="alert d-none" role="alert"></div>         
+    </div>
     <?php echo $this->renderSection('botones'); ?>
     <?php echo $this->renderSection('contenido'); ?>
 
