@@ -30,6 +30,21 @@
     protected $createdField = 'subtask_created';
     protected $updatedField  = 'subtask_updated_at';
     protected $deletedField  = 'subtask_deleted_at';  
+    protected $useSoftDeletes = true;
     protected $useTimestamps = true;
+
+    public function obtenerSubtareas($taskId){
+      return $this->select('subtasks.*, users.user_name')
+        ->join('users', 'users.user_id = subtasks.user_id', "left")
+        ->where('task_id', $taskId)
+        ->findAll();
+    }
+
+    public function obtenerSubtarea($subtaskId){
+      return $this->select('subtasks.*, users.user_name')
+      ->join('users', 'users.user_id = subtasks.user_id', 'left')
+      ->where('subtask_id', $subtaskId)
+      ->first();
+    }
   }
 ?>
