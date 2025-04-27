@@ -34,6 +34,7 @@
     ];
     protected $dateFormat = 'datetime';
     protected $useTimestamps = true;
+    protected $useSoftDeletes = true;
 
     public function obtenerTarea($tareaId){
       $task = $this-> where ('task_id', $tareaId) -> first();
@@ -44,7 +45,7 @@
 
       $subTaskModel = new SubTaskModel();
       $collaborationModel = new CollaborationModel();
-      $task['subtasks'] = $subTaskModel -> where('task_id', $tareaId) -> findAll();
+      $task['subtasks'] = $subTaskModel->obtenerSubtareas($tareaId); 
       $task['colaboradores'] = $collaborationModel -> where ('tasK_id', $tareaId) -> findAll();
       return $task;
     }
