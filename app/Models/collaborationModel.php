@@ -12,8 +12,9 @@
       'task_id',
     ];
 
-    protected $createdField = 'collaboration_created';
+    protected $deletedField = 'collaboration_deleted_at';
     protected $useTimestamps = true;
+    protected $useSoftDeletes = true;
 
     public function getColaboradores($taskId){
       return $this->select('users.user_id, users.user_name')
