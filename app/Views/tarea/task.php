@@ -1,4 +1,6 @@
 <?php 
+
+use App\Models\UserModel;
   if (!session('user_id'))  {
     return view('auth/login');
 }
@@ -8,9 +10,6 @@
 <?= $this->extend('plantilla/layout')?>
 <?= $this->section('contenido') ?>
 
-<div class="container">
-  <div id="mensaje-success" class="alert d-none" role="alert"></div>         
-</div>
 
 <section class="container mt-5">
   <article class="card text-light p-4 rounded-3" style="background-color:<?= $task['task_color'] ?>">
@@ -31,8 +30,19 @@
         <ul class="list-group list-group-flush">
           <?php foreach ($task['subtasks'] as $sub): ?>
             <li class="list-group-item text-light border-light p-2 d-flex justify-content-between align-items-center" style="background-color:<?= $task['task_color'] ?>">
-              <?= esc($sub['subtask_desc']) ?>
-              <span><?= esc($sub['subtask_state']) ?></span>
+              <span class="text-light subtarea-item"
+                    role="button"
+                    data-bs-toggle="modal" 
+                    data-bs-target="#subtaskModal"
+                    data-desc="<?= esc($sub['subtask_desc']) ?>"
+                    data-state="<?= esc($sub['subtask_state']) ?>"
+                    data-priority="<?= esc($sub['subtask_priority']) ?>"
+                    data-expiry="<?= esc($sub['subtask_expiry']) ?>"
+                    data-comment="<?= esc($sub['subtask_comment']) ?>"
+                    data-responsible="<?= $sub['user_id'] != null ? $sub['user_name'] : 'Sin responsable' ?>"
+                    data-id="<?= esc($sub['subtask_id'])?>">
+                    <?= esc(data: $sub['subtask_desc']) ?> | <strong>Estado:</strong> <?= esc($sub['subtask_state']) ?>
+              </span>
             </li>
           <?php endforeach; ?>
         </ul>
@@ -57,6 +67,7 @@
         <button class="btn btn-editar btn-sm btn-outline-dark" data-task-id="<?= $task['task_id'] ?>">✏️ Editar</button>
         <button class="btn btn-eliminar btn-sm btn-outline-dark" data-task-id="<?= $task['task_id'] ?>">🗑️ Eliminar</button>
         <button class="btn btn-archivar btn-sm btn-outline-dark" data-task-id="<?= $task['task_id'] ?>">📦 Archivar</button>
+        <button type="button" class="btn btn-sm btn-outline-dark" data-bs-toggle="modal" data-bs-target="#newtaskCollaborator">Agregar Colaborador</button>
         <button class="btn btn-newSubtask btn-sm btn-outline-dark" data-bs-toggle="modal" data-bs-target="#newSubtask" data-task-id="<?= $task['task_id'] ?>">&#10133; Nueva Subtarea</button>
       </div>
     </div>
@@ -196,13 +207,7 @@
               <?= session('errors.subtaskResponsible') ?? '' ?>
             </div>
           </div>
-
-          
             <input type="text" class="d-none" name="task_id" value="<?= $task['task_id'] ?>">
-
-          <?php if (session('error')): ?>
-            <div class="alert alert-danger"><?= session('error') ?></div>
-          <?php endif; ?>
         </form>
       </div>
       <div class="modal-footer d-flex justify-content-end gap-2">
@@ -213,9 +218,131 @@
   </div>
 </div>
 
+<!-- Modal Subtarea -->
+
+<div class="modal fade" id="subtaskModal" tabindex="-1" aria-labelledby="subtaskModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content bg-light text-dark">
+      <div class="modal-header">
+        <h5 class="modal-title" id="subtaskModalLabel">📄 Detalle de la Subtarea</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Descripción:</strong> <span id="modalSubtaskDesc"></span></p>
+        <p><strong>Estado:</strong> <span id="modalSubtaskState"></span></p>
+        <p><strong>Prioridad:</strong> <span id="modalSubtaskPriority"></span></p>
+        <p><strong>Vencimiento:</strong> <span id="modalSubtaskExpiry"></span></p>
+        <p><strong>Comentario:</strong> <span id="modalSubtaskComment"></span></p>
+        <p><strong>Responsable:</strong> <span id="modalSubtaskResponsible"></span></p>
+      </div>
+      <div class="modal-footer">
+        <div id="estadoSubtareaControles" class="d-flex gap-2 flex-wrap">
+          <form method="get" action="<?= base_url('subtask/editar-subtarea')?>" class="d-inline">
+            <input type="hidden" name="subtask" id="estadoSubtareaId">
+            <button type="submit" class="btn btn-warning btn-sm">✏️ Editar</button>
+          </form>
+
+          <form method="post" action="<?= base_url('subtask/eliminar-subtarea') ?>" class="d-inline">
+            <input type="hidden" name="subtask_id" id="estadoSubtareaId2">
+            <button type="submit" class="btn btn-danger btn-sm">🗑️ Eliminar</button>
+          </form>
+
+          
+
+            <!-- Button trigger modal -->
+              <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                Agregar Colaborador
+              </button>
+
+              <!-- Modal -->
+              <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h1 class="modal-title fs-5" id="staticBackdropLabel">Agregar Colaborador</h1>
+                      <button type="button" class="btn-close btn-outline-danger" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <form method="post" action="<?= base_url('subtask/agregar-colaborador') ?>" class="d-inline" id="addCollaboratorForm">
+                        <input type="hidden" name="subtask_id" id="estadoSubtareaId3">
+                        <label for="subtaskCollaborator" class="form-label">Correo:</label>
+                        <input type="email" name="subtaskCollaborator" id="subtaskCollaborator" class="form-control <?= session('errors.subtaskCollaborator') ? 'is-invalid' : '' ?>" value="<?= old('subtaskCollaborator') ?>" required><br>
+                        <div class="invalid-feedback">
+                          <?= session('errors.subtaskCollaborator') ?? '' ?>
+                        </div>
+                      </form>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cerrar</button>
+                      <button type="submit" class="btn btn-primary btn-sm" form="addCollaboratorForm">Agregar Colaborador</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+        </div>
+        <button type="button" class="btn btn-primary btn-sm" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>  
+
+<!-- Modal Colaborador Tarea-->
+<div class="modal fade" id="newtaskCollaborator" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="newtaskCollaboratorLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="newtaskCollaboratorLabel">Agregar Colaborador</h1>
+        <button type="button" class="btn-close btn-outline-danger" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="<?= base_url('tareas/agregar-colaborador') ?>" class="d-inline" id="addCollaboratorTaskForm">
+          <label for="taskCollaborator" class="form-label">Correo:</label>
+          <input type="hidden" name="task_id" value="<?= $task['task_id'] ?>">
+          <input type="email" name="taskCollaborator" id="taskCollaborator" class="form-control <?= session('errors.taskCollaborator') ? 'is-invalid' : '' ?>" value="<?= old('taskCollaborator') ?>" required><br>
+          <div class="invalid-feedback">
+            <?= session('errors.taskCollaborator') ?? '' ?>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cerrar</button>
+        <button type="submit" class="btn btn-primary btn-sm" form="addCollaboratorTaskForm">Agregar Colaborador</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
   const BASE_URL = "<?= base_url() ?>";
 </script>
 <script src="<?= base_url('public/scripts/funcionesTarea.js') ?>"></script>
+<script src="<?= base_url('public/scripts/funcionesSubtarea.js') ?>"></script>
+<script>
+  <?php if (session('success')): ?>
+    mostrarMensaje('mensaje-success', <?= json_encode(session('success')) ?>, 'success');
+  <?php endif ?>
+</script>
+<script>
+  <?php if (session('error')): ?>
+    mostrarMensaje('mensaje-success', <?= json_encode(session('error')) ?>, 'danger');
+  <?php endif ?>
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+  const modal = document.getElementById('staticBackdrop');
+
+  modal.addEventListener('shown.bs.modal', function (event) {
+    const button = document.getElementById('estadoSubtareaId');
+    const subtaskId = button.getAttribute('value');
+    
+    
+    const input = modal.querySelector('#estadoSubtareaId3');
+    if (input) {
+      input.value = subtaskId;
+    }
+  });
+});
+</script>
+
 
 <?= $this->endSection() ?>
