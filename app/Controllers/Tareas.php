@@ -88,6 +88,20 @@
       return view('tarea/newTask', ['titulo' => 'Nueva Tarea']);
     }
     
+    public function postAgregarColaborador(){
+      $validation = $validation = \Config\Services::validation();
+      $taskId = $this->request->getPost('task_id');
+      $rules = [
+      'taskCollaborator' => 'required|valid_email|exist_user_email[taskCollaborator]',  
+      ];
+
+      if(!$this->validate($rules)){
+        return redirect()->back()->withInput()->with('errors', $validation->getErrors())->with('error', 'Ocurrio un error al enviar la invitacion, revise los datos ingresados.');
+      }
+
+      //logica para enviar el correo y almacenar la invitacion.
+      return redirect()->to(base_url() . 'tareas/ver/'.$taskId)->with('success', 'Se ha enviado el correo de invitacion correctamente.');
+    }
 
     public function postCrearTarea() {	
     $validation = service('validation');
