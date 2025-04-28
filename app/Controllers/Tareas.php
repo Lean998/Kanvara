@@ -2,6 +2,9 @@
   namespace App\Controllers;
   use App\Models\CollaborationModel;
   use App\Models\TaskModel;
+  use App\Models\invitationModel;
+  use CodeIgniter\Config\Services;
+
   class Tareas extends BaseController{
     public function getIndex (){
       
@@ -89,8 +92,9 @@
     }
     
     public function postAgregarColaborador(){
-      $validation = $validation = \Config\Services::validation();
+      $validation = \Config\Services::validation();
       $taskId = $this->request->getPost('task_id');
+      
       $rules = [
       'taskCollaborator' => 'required|valid_email|exist_user_email[taskCollaborator]',  
       ];
@@ -98,9 +102,34 @@
       if(!$this->validate($rules)){
         return redirect()->back()->withInput()->with('errors', $validation->getErrors())->with('error', 'Ocurrio un error al enviar la invitacion, revise los datos ingresados.');
       }
+      $taskModel = new TaskModel();
+      $invitationModel = new invitationModel();
+      $tarea = $taskModel->obtenerTarea($taskId);
+      $usuario = $this->request->getPost('taskCollaborator');
 
-      //logica para enviar el correo y almacenar la invitacion.
-      return redirect()->to(base_url() . 'tareas/ver/'.$taskId)->with('success', 'Se ha enviado el correo de invitacion correctamente.');
+      $email = Services::email();
+      $email->setTo($usuario);
+      $email->setSubject('Invitacion a colaborar en '. $tarea['task_title']);
+      $codigo = strtoupper(bin2hex(random_bytes(5)));
+      $email->setMessage('Para aceptar la invitacion ingresa el siguiente codigo: ' . $codigo);
+
+      if ($email->send()) {
+        
+        $expire = new \DateTime(); 
+        $expire->add(new \DateInterval('PT5M'));  
+        $datos = [
+          'task_id' => $taskId,
+          'invitation_email' => $usuario,
+          'invitation_code' => $codigo,
+          'invitation_used' => false,
+          'invitation_expires_at' => $expire->format('Y-m-d H:i:s'),
+        ];
+        $invitationModel->save($datos);
+        return redirect()->to(base_url() . 'tareas/ver/'.$taskId)->with('success', 'Se ha enviado el correo de invitacion correctamente.');
+      } else {
+        return redirect()->to(base_url() . 'tareas/ver/'.$taskId)->with('error', 'Ocurrio un error al momento de enviar la invitacion, intente de nuevo mas tarde.');
+      }
+      
     }
 
     public function postCrearTarea() {	
