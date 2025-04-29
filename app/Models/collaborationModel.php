@@ -24,5 +24,12 @@
         ->where('collaborations.task_id', $taskId)
         ->findAll();
     }
+
+    public function isCollaborator($taskId, $userId){
+      return $this->where('task_id', $taskId)
+      ->where('user_id', $userId)
+      ->where('collaboration_deleted_at IS NULL')
+      ->first();
+    }
   }
 ?>
