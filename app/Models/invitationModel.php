@@ -22,12 +22,10 @@
     protected $useTimestamps = true;
 
     public function isInvitationValid($invitation_code){
-      $consulta = $this->where('invitation_code', $invitation_code)
+      return $this->where('invitation_code', $invitation_code)
         ->where('invitation_expires_at >', date('Y-m-d H:i:s'))
         ->where('invitation_used', 0)
         ->first();
-      log_message('debug', 'SQL Query: ' . $this->db->getLastQuery());
-      return $consulta;            
     }
     public function getInvitacion($taskId, $email){
       return $this->where('task_id', $taskId)
@@ -47,6 +45,12 @@
 
     public function existingCode($codigo){
       return $this->where('invitation_code', $codigo)->first();
+    }
+
+    public function deleteExpiredInvitations(){
+      $this->where('invitation_expires_at <=', date('Y-m-d H:i:s'))
+      ->where('invitation_used', 0)
+      ->delete();
     }
 
     
