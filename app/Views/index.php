@@ -1,17 +1,14 @@
 <?php 
-  if (!session('user_id'))  {
-    return view('auth/login');
-}
+  $sesion = session();
+  if(!isset($_SESSION['user_id']) OR !$sesion->get("user_id")){
+    return view("auth/login");
+  }
 ?>
 
 <?= $this->extend('plantilla/layout')?>
 <?= $this->section('botones') ?>
 
 
-
-<div class="container">
-  <div id="mensaje-success" class="alert d-none" role="alert"></div>         
-</div>
 <!-- Modal -->
 <div class="modal fade" id="newTask" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
@@ -118,9 +115,14 @@
 
 <div class="container d-flex justify-content-between align-items-center my-2">
   <h2 class="text-center">Tus tareas</h2>
-  <button type="button" class="btn btn-primary m-2 rounded-3" data-bs-toggle="modal" data-bs-target="#newTask">
-    Nueva Tarea
-  </button>
+  <div>
+    <button type="button" class="btn btn-primary m-2 rounded-3" data-bs-toggle="modal" data-bs-target="#newTask">
+      Nueva Tarea
+    </button>
+    <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#invitationModal">
+      Tengo un Código de Invitación
+    </button>
+  </div>
 </div>
 
 <div class="container">
@@ -143,12 +145,12 @@
           </a>
           
           <div class="w-50">
-            <h6 class="mb-2">Subtareas</h6>
             <a href="tareas/ver/<?= $task['task_id']?>" style="text-decoration: none; color: inherit;">
+            <h6 class="mb-2">Subtareas</h6>
             <ul class="list-group list-group-flush">
               <?php foreach ($task['subtasks'] as $sub): ?>
                 <li class="list-group-item  border-light p-1 text-light" style="background-color:<?= $task['task_color'] ?>">
-                  <?= esc($sub['subtask_desc'] . ' ' . $sub['subtask_state']) ?> 
+                  <?= esc($sub['subtask_desc']) . ' | <strong>Estado: </strong>  ' . esc($sub['subtask_state']) ?> 
                 </li>
               <?php endforeach; ?>
             </ul>
@@ -217,6 +219,36 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
         <button id="btnConfirmarEditar" type="button" class="btn btn-primary">Editar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="invitationModal" tabindex="-1" aria-labelledby="invitationModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="invitationModalLabel">Ingresar Código de Invitación</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <?php if (session()->getFlashdata('error')): ?>
+          <div class="alert alert-danger">
+            <?= esc(session()->getFlashdata('error')) ?>
+          </div>
+        <?php endif; ?>
+        <?= form_open('tareas/aceptar-invitacion') ?>
+        <div class="mb-3">
+          <label for="invitation_code" class="form-label">Código de Invitación</label>
+          <input type="text" name="invitation_code" id="invitation_code" class="form-control" placeholder="Ingresa el código" required>
+        </div>
+        <div class="d-grid">
+          <button type="submit" class="btn btn-primary">Enviar Código</button>
+        </div>
+        <?= form_close() ?>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
       </div>
     </div>
   </div>
