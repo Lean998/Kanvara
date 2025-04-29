@@ -7,7 +7,7 @@ use App\Models\TaskModel;
 
 class Home extends BaseController {
     public function getIndex() {
-
+    helper('form');
     $task = new TaskModel();
     $tasks = $task->obtenerTareas(session('user_id'));
     
