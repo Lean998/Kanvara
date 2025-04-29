@@ -3,6 +3,7 @@
   use App\Models\CollaborationModel;
   use App\Models\TaskModel;
   use App\Models\InvitationModel;
+  use App\Models\UserModel;
   use CodeIgniter\Config\Services;
 
   class Tareas extends BaseController{
@@ -114,13 +115,25 @@
       if(!$this->validate($rules)){
         return redirect()->back()->withInput()->with('errors', $validation->getErrors())->with('error', 'Ocurrio un error al enviar la invitacion, revise los datos ingresados.');
       }
+
       $taskModel = new TaskModel();
       $invitationModel = new InvitationModel();
+      $userModel = new UserModel();
+      $collaborationModel = new CollaborationModel();
       $tarea = $taskModel->obtenerTarea($taskId);
+
       if (!$tarea) {
         return redirect()->back()->with('error', 'Ocurrio un error al obtener la tarea.');
       }
       $usuario = $this->request->getPost('taskCollaborator');
+
+      $usuarioInvitado = $userModel->obtenerUsuarioEmail($usuario);
+      if($usuarioInvitado){
+        if ($collaborationModel->isCollaborator($taskId, $usuarioInvitado['user_id'])) {
+          return redirect()->to(base_url() . 'tareas/ver/' . $taskId)->with('error', 'El usuario ingresado ya es un colaborador de esta tarea.');
+        }
+      }
+      
 
       $existingInvitation = $invitationModel->getInvitacion($taskId, $usuario);
       if ($existingInvitation) {
@@ -142,15 +155,12 @@
       $email->setMessage($message);
 
       if ($email->send()) {
-        
-        $expire = new \DateTime(); 
-        $expire->add(new \DateInterval('PT5M'));  
         $datos = [
           'task_id' => $taskId,
           'invitation_email' => $usuario,
           'invitation_code' => $codigo,
           'invitation_used' => 0,
-          'invitation_expires_at' => $expire->format('Y-m-d H:i:s'),
+          'invitation_expires_at' => date('Y-m-d H:i:s', strtotime('+5 minutes')),
         ];
         $invitationModel->save($datos);
         return redirect()->to(base_url() . 'tareas/ver/'.$taskId)->with('success', 'Se ha enviado el correo de invitacion correctamente.');
@@ -186,10 +196,15 @@
         return view('tarea/aceptar_invitacion', $data);
       }
 
+      $invitationModel->deleteExpiredInvitations();
       $invitationCode = $this->request->getPost('invitation_code');
-      
-
       $invitation = $invitationModel->isInvitationValid($invitationCode);
+
+      $existingInvitation = $invitationModel->where('invitation_code', $invitationCode)->first();
+      if ($existingInvitation && $existingInvitation['invitation_expires_at'] <= date('Y-m-d H:i:s')) {
+          $data['errors']['invitation_code'] = 'La invitación ha expirado.';
+          return view('tarea/aceptar_invitacion', $data);
+      }
 
       if(!$invitation){
         $data['errors']['invitation_code'] = 'El código es inválido, ha expirado o ya fue usado.';
@@ -208,17 +223,38 @@
         if (!$tarea) {
           $data['errors']['invitation_code'] = 'La tarea asociada no existe.';
           return view('tarea/aceptar_invitacion', $data);
-        }
+      }
 
-      $invitationModel->delete($invitation['invitation_id']);
-      
-      $collaboratorData = [
-        'task_id' => $taskId,
-        'user_id' => session('user_id'),
-      ];
+      $userId = session('user_id');
+      if ($collaborationModel->isCollaborator($taskId, $userId)) {
+          $data['errors']['invitation_code'] = 'Ya eres colaborador de esta tarea.';
+          $invitationModel->delete($invitation['invitation_id']);
+          return view('tarea/aceptar_invitacion', $data);
+      }
 
-      $collaborationModel->save($collaboratorData);
+      try {
+        $db = \Config\Database::connect();
+        $db->transStart();
+
+        $invitationModel->delete($invitation['invitation_id']);
+        $collaboratorData = [
+            'task_id' => $taskId,
+            'user_id' => $userId,
+        ];
+        $collaborationModel->save($collaboratorData);
+      } catch (\Exception $e) {
+        $db->transRollback();
+        $data['errors']['invitation_code'] = 'Ocurrió un error al procesar la invitación. Intenta de nuevo.';
+        return view('tarea/aceptar_invitacion', $data);
+      }
       
+      $db->transComplete();
+
+      if ($db->transStatus() === false) {
+        $data['errors']['invitation_code'] = 'Ocurrió un error al procesar la invitación. Intenta de nuevo.';
+        return view('tarea/aceptar_invitacion', $data);
+      }
+      $db->close;
       return redirect()->to(base_url() . 'tareas/ver/' . $taskId)->with('success', '¡Has sido añadido como colaborador en la tarea!');
 
     }
