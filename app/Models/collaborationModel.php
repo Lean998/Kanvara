@@ -13,6 +13,8 @@
     ];
 
     protected $deletedField = 'collaboration_deleted_at';
+    protected $createdField = 'collaboration_created_at';
+    protected $updatedField = 'collaboration_updated_at';
     protected $useTimestamps = true;
     protected $useSoftDeletes = true;
 
