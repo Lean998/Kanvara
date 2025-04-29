@@ -59,6 +59,7 @@
       session()->set([
         'user_id' => $user['user_id'],
         'user_name' => $user['user_name'],
+        'user_email' => $user['user_email'],
         'isLoggedIn' => true,
       ]);
 
