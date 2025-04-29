@@ -2,7 +2,7 @@
   namespace App\Controllers;
   use App\Models\CollaborationModel;
   use App\Models\TaskModel;
-  use App\Models\invitationModel;
+  use App\Models\InvitationModel;
   use CodeIgniter\Config\Services;
 
   class Tareas extends BaseController{
@@ -90,7 +90,19 @@
     public function getNuevaTarea(){
       return view('tarea/newTask', ['titulo' => 'Nueva Tarea']);
     }
-    
+
+    public function getAceptarInvitacion($taskId){
+      $taskModel = new TaskModel();
+      $tarea = $taskModel->obtenerTarea($taskId);
+            if (!$tarea) {
+                $data['errors']['task_id'] = 'La tarea especificada no existe.';
+            }
+            $data['task_id'] = $taskId;
+            $data['titulo'] = 'Aceptar Invitacion';
+            $data['task_title'] = $tarea['task_title'] ?? '';
+            return view('tarea/aceptar_invitacion', $data);
+    }
+
     public function postAgregarColaborador(){
       $validation = \Config\Services::validation();
       $taskId = $this->request->getPost('task_id');
@@ -103,15 +115,31 @@
         return redirect()->back()->withInput()->with('errors', $validation->getErrors())->with('error', 'Ocurrio un error al enviar la invitacion, revise los datos ingresados.');
       }
       $taskModel = new TaskModel();
-      $invitationModel = new invitationModel();
+      $invitationModel = new InvitationModel();
       $tarea = $taskModel->obtenerTarea($taskId);
+      if (!$tarea) {
+        return redirect()->back()->with('error', 'Ocurrio un error al obtener la tarea.');
+      }
       $usuario = $this->request->getPost('taskCollaborator');
+
+      $existingInvitation = $invitationModel->getInvitacion($taskId, $usuario);
+      if ($existingInvitation) {
+          return redirect()->to(base_url() . 'tareas/ver/' . $taskId)->with('error', 'Ya existe una invitación activa para este usuario.');
+      }
 
       $email = Services::email();
       $email->setTo($usuario);
       $email->setSubject('Invitacion a colaborar en '. $tarea['task_title']);
+      do {
+        $codigo = strtoupper(bin2hex(random_bytes(5)));
+      } while ($invitationModel->existingCode($codigo));
       $codigo = strtoupper(bin2hex(random_bytes(5)));
-      $email->setMessage('Para aceptar la invitacion ingresa el siguiente codigo: ' . $codigo);
+      $message = view('emails/invitation', [
+        'task_title' => $tarea['task_title'],
+        'code' => $codigo,
+        'accept_url' => base_url('tareas/aceptar-invitacion/' . $taskId),
+      ]);
+      $email->setMessage($message);
 
       if ($email->send()) {
         
@@ -121,7 +149,7 @@
           'task_id' => $taskId,
           'invitation_email' => $usuario,
           'invitation_code' => $codigo,
-          'invitation_used' => false,
+          'invitation_used' => 0,
           'invitation_expires_at' => $expire->format('Y-m-d H:i:s'),
         ];
         $invitationModel->save($datos);
@@ -130,6 +158,69 @@
         return redirect()->to(base_url() . 'tareas/ver/'.$taskId)->with('error', 'Ocurrio un error al momento de enviar la invitacion, intente de nuevo mas tarde.');
       }
       
+    }
+
+    public function postAceptarInvitacion(){
+
+      helper('form');
+
+      $invitationModel = new InvitationModel();
+      $taskModel = new TaskModel();
+      $collaborationModel = new CollaborationModel(); 
+      $validation = \Config\Services::validation();
+      $taskId = null;
+      
+      $data = [
+        'titulo' => 'Aceptar invitacion',
+        'task_id' => null,
+        'errors' => [],
+        'success' => null,
+      ];
+
+      $rules = [
+        'invitation_code' => 'required|min_length[10]|max_length[10]',
+      ];
+
+      if (!$this->validate($rules)) {
+        $data['errors'] = $validation->getErrors();
+        return view('tarea/aceptar_invitacion', $data);
+      }
+
+      $invitationCode = $this->request->getPost('invitation_code');
+      
+
+      $invitation = $invitationModel->isInvitationValid($invitationCode);
+
+      if(!$invitation){
+        $data['errors']['invitation_code'] = 'El código es inválido, ha expirado o ya fue usado.';
+        return view('tarea/aceptar_invitacion', $data);
+      }
+
+      $taskId = $invitation['task_id'];
+
+      $userEmail = session('user_email'); 
+        if ($invitation['invitation_email'] !== $userEmail) {
+          $data['errors']['invitation_code'] = 'Este código no está asociado a tu cuenta.';
+          return view('tarea/aceptar_invitacion', $data);
+      }
+
+      $tarea = $taskModel->obtenerTarea($taskId);
+        if (!$tarea) {
+          $data['errors']['invitation_code'] = 'La tarea asociada no existe.';
+          return view('tarea/aceptar_invitacion', $data);
+        }
+
+      $invitationModel->delete($invitation['invitation_id']);
+      
+      $collaboratorData = [
+        'task_id' => $taskId,
+        'user_id' => session('user_id'),
+      ];
+
+      $collaborationModel->save($collaboratorData);
+      
+      return redirect()->to(base_url() . 'tareas/ver/' . $taskId)->with('success', '¡Has sido añadido como colaborador en la tarea!');
+
     }
 
     public function postCrearTarea() {	
@@ -171,6 +262,7 @@
       $taskModel->save($data);
 
       return redirect()->to('')->with('success', 'Tarea creada correctamente.');
-  }
+    }
+
 }
 ?>
