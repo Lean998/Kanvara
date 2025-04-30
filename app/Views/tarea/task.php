@@ -247,38 +247,10 @@ use App\Models\UserModel;
             <button type="submit" class="btn btn-danger btn-sm">🗑️ Eliminar</button>
           </form>
 
-          
-
-            <!-- Button trigger modal -->
-              <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-                Agregar Colaborador
-              </button>
-
-              <!-- Modal -->
-              <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h1 class="modal-title fs-5" id="staticBackdropLabel">Agregar Colaborador</h1>
-                      <button type="button" class="btn-close btn-outline-danger" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                      <form method="post" action="<?= base_url('subtask/agregar-colaborador') ?>" class="d-inline" id="addCollaboratorForm">
-                        <input type="hidden" name="subtask_id" id="estadoSubtareaId3">
-                        <label for="subtaskCollaborator" class="form-label">Correo:</label>
-                        <input type="email" name="subtaskCollaborator" id="subtaskCollaborator" class="form-control <?= session('errors.subtaskCollaborator') ? 'is-invalid' : '' ?>" value="<?= old('subtaskCollaborator') ?>" required><br>
-                        <div class="invalid-feedback">
-                          <?= session('errors.subtaskCollaborator') ?? '' ?>
-                        </div>
-                      </form>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cerrar</button>
-                      <button type="submit" class="btn btn-primary btn-sm" form="addCollaboratorForm">Agregar Colaborador</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
+          <form method="get" action="<?= base_url('subtask/agregar-colaborador')?>" class="d-inline">
+            <input type="hidden" name="subtask" id="estadoSubtareaId3">
+            <button type="submit" class="btn btn-success btn-sm"> Agregar Colaborador</button>
+          </form>
         </div>
         <button type="button" class="btn btn-primary btn-sm" data-bs-dismiss="modal">Cerrar</button>
       </div>
@@ -326,22 +298,6 @@ use App\Models\UserModel;
   <?php if (session('error')): ?>
     mostrarMensaje('mensaje-success', <?= json_encode(session('error')) ?>, 'danger');
   <?php endif ?>
-</script>
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-  const modal = document.getElementById('staticBackdrop');
-
-  modal.addEventListener('shown.bs.modal', function (event) {
-    const button = document.getElementById('estadoSubtareaId');
-    const subtaskId = button.getAttribute('value');
-    
-    
-    const input = modal.querySelector('#estadoSubtareaId3');
-    if (input) {
-      input.value = subtaskId;
-    }
-  });
-});
 </script>
 
 
