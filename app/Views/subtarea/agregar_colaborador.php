@@ -9,13 +9,13 @@ if (!session('user_id')) {
 <?= $this->endSection() ?>
 <?= $this->section('contenido') ?>
 <div class="container">
-    <form action="<?= base_url('subtask/editar-subtarea') ?>" method="post" id="subtaskEditForm" class="container mt-4 p-3 border rounded shadow-sm bg-light">
+    <form action="<?= base_url('subtask/agregar-colaborador') ?>" method="post" id="subtaskEditForm" class="container mt-4 p-3 border rounded shadow-sm bg-light">
         <?= csrf_field() ?>
         <div class="mb-3">
             <label for="subtaskResponsible" class="form-label">Responsable:</label>
             <?php if (!empty($colab)): ?>
                 <select name="subtaskResponsible" id="subtaskResponsible" class="form-select <?= session('errors.subtaskResponsible') ? 'is-invalid' : '' ?>" required>
-                    <option value="">-- Selecciona un colaborador --</option>
+                    <option value="" disabled>-- Selecciona un colaborador --</option>
                     <?php foreach ($colab as $colaborador): ?>
                         <option value="<?= esc($colaborador['user_id']) ?>" 
                                 <?= $subtask['user_id'] == $colaborador['user_id'] ? 'selected' : '' ?>>
@@ -31,7 +31,6 @@ if (!session('user_id')) {
                 <?= session('errors.subtaskResponsible') ?? '' ?>
             </div>
         </div>
-          
         <input type="hidden" name="subtask_id" value="<?= esc($subtask['subtask_id']) ?>">
         <input type="hidden" name="task_id" value="<?= esc($subtask['task_id']) ?>">
         
