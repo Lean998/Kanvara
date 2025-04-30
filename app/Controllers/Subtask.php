@@ -3,7 +3,8 @@
   use App\Models\CollaborationModel;
   use App\Models\SubTaskModel;
   use App\Models\TaskModel;
-  use CodeIgniter\Controller;
+use App\Models\UserModel;
+use CodeIgniter\Controller;
 
   class Subtask extends Controller{
     public function postCrearSubtarea(){
@@ -136,7 +137,44 @@
         return redirect()->back()->with('error', 'No se pudo eliminar la subtarea.');
     }
     }
+    public function getAgregarColaborador(){
+      $subtaskModel = new SubTaskModel();
+      $subtask = $subtaskModel->obtenerSubtarea($this->request->getGet('subtask'));
+      $taskModel = new TaskModel();
+      $task = $taskModel->obtenerTarea($subtask['task_id']);
+      if(session('user_id') != $subtask['user_id'] AND session('user_id') != $task['user_id']){
+        return redirect()->back()->withInput()->with('error', 'No tienes permisos para realizar esta acción.');
+      }
 
+      $subtaskCollaboratorIds = array_column($subtask['colaboradores'], 'user_id');
+      $collaboratorDisp = array_filter($task['colaboradores'], 
+            function ($collaborator) use ($subtaskCollaboratorIds) {
+                // Convertir user_id a string para evitar problemas de tipo
+                $collaboratorId = (string) $collaborator['user_id'];
+                $isInSubtask = in_array($collaboratorId, array_map('strval', $subtaskCollaboratorIds), true);
+                log_message('debug', "Collaborator ID {$collaboratorId} in Subtask: " . ($isInSubtask ? 'Yes' : 'No'));
+                return !$isInSubtask;
+            }
+        );
+
+      $userModel = new UserModel();
+      foreach ($collaboratorDisp as &$collaborator) {
+        $user = $userModel->where('user_id', $collaborator['user_id'])->first();
+        $collaborator['user_name'] = $user ? $user['user_name'] : 'Desconocido';
+      }
+      unset($collaborator); 
+
+      $collaboratorDisp = array_values($collaboratorDisp);
+
+      $data = [
+        'titulo' => 'Agregar Colaborador',
+        'subtask' => $subtask,
+        'colab' => $collaboratorDisp
+      ];
+
+
+      return view('subtarea/agregar_colaborador', $data);
+    }
     public function postAgregarColaborador(){
       $validation = $validation = \Config\Services::validation();
       $subtaskModel = new SubTaskModel();
