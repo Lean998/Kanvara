@@ -1,18 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const items = document.querySelectorAll('.subtarea-item');
 
-    const modal = document.getElementById('staticBackdrop');
-
-    modal.addEventListener('shown.bs.modal', function (event) {
-      const button = document.getElementById('estadoSubtareaId');
-      const subtaskId = button.getAttribute('value');
-      
-      
-      const input = modal.querySelector('#estadoSubtareaId3');
-      if (input) {
-        input.value = subtaskId;
-      }
-    });
     
     items.forEach(item => {
       item.addEventListener('click', () => {
@@ -35,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Asignar IDs a los inputs ocultos
         document.getElementById('estadoSubtareaId').value = id;
         document.getElementById('estadoSubtareaId2').value = id;
+        document.getElementById('estadoSubtareaId3').value = id;
       });
     });
   });
