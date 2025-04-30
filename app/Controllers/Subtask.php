@@ -1,10 +1,11 @@
 <?php
   namespace App\Controllers;
   use App\Models\CollaborationModel;
+  use App\Models\collaborationSubtaskModel;
   use App\Models\SubTaskModel;
   use App\Models\TaskModel;
-use App\Models\UserModel;
-use CodeIgniter\Controller;
+  use App\Models\UserModel;
+  use CodeIgniter\Controller;
 
   class Subtask extends Controller{
     public function postCrearSubtarea(){
@@ -141,8 +142,10 @@ use CodeIgniter\Controller;
       $subtaskModel = new SubTaskModel();
       $subtask = $subtaskModel->obtenerSubtarea($this->request->getGet('subtask'));
       $taskModel = new TaskModel();
+      $collaborationSubtaskModel = new collaborationSubtaskModel();
       $task = $taskModel->obtenerTarea($subtask['task_id']);
-      if(session('user_id') != $subtask['user_id'] AND session('user_id') != $task['user_id']){
+      
+      if(!$collaborationSubtaskModel->isResponsable($subtask['subtask_id'], session('user_id')) AND session('user_id') != $task['user_id']){
         return redirect()->back()->withInput()->with('error', 'No tienes permisos para realizar esta acción.');
       }
 
@@ -176,25 +179,20 @@ use CodeIgniter\Controller;
       return view('subtarea/agregar_colaborador', $data);
     }
     public function postAgregarColaborador(){
-      $validation = $validation = \Config\Services::validation();
-      $subtaskModel = new SubTaskModel();
+      $colaborationSubtaskModel = new collaborationSubtaskModel();
+      $userColaborator = $this->request->getPost('subtaskResponsible');
       $subtaskId = $this->request->getPost('subtask_id');
-      $rules = [
-      'subtaskCollaborator' => 'required|valid_email|exist_user_email[subtaskCollaborator]',
+      $taskId = $this->request->getPost('task_id');
+
+      $data = [
+        'user_id' => $userColaborator,
+        'subtask_id' => $subtaskId,
       ];
 
-      if(!$this->validate($rules)){
-        return redirect()->back()->withInput()->with('errors', $validation->getErrors());
+      if(!$colaborationSubtaskModel->save($data)){
+        return redirect()->back()->withInput()->with('error', 'Ocurrio un error al momento de agregar al colaborador.');
       }
-      
-      $subtask = $subtaskModel->obtenerSubtarea($subtaskId);
-      if (!$subtask) {
-        return redirect()->back()->with('error', 'Subtarea no encontrada: '. $subtaskId );
-      }
-      
-      $taskId = $subtask['task_id'];
-      //logica para enviar el correo y almacenar la invitacion.
-      return redirect()->to('tareas/ver/' . $taskId )->with('success', 'Se ha enviado el correo de invitacion correctamente.');
+      return redirect()->to('tareas/ver/' . $taskId )->with('success', 'Se ha agregado al colaborador con exito.');
     }
   }
 
