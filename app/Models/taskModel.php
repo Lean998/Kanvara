@@ -45,8 +45,15 @@
 
       $subTaskModel = new SubTaskModel();
       $collaborationModel = new CollaborationModel();
+      $collaborationSubtaskModel = new collaborationSubtaskModel();
       $task['subtasks'] = $subTaskModel->obtenerSubtareas($tareaId); 
-      $task['colaboradores'] = $collaborationModel -> where ('tasK_id', $tareaId) -> findAll();
+      if ($task['subtasks']) {
+        foreach ($task['subtasks'] as &$subtask) { 
+            $subtask['colaboradores'] = $collaborationSubtaskModel->getColaboradores($subtask['subtask_id']);
+        }
+        unset($subtask);
+      }
+      $task['colaboradores'] = $collaborationModel -> where ('task_id', $tareaId) -> findAll();
       return $task;
     }
     public function obtenerTareas($userId){
