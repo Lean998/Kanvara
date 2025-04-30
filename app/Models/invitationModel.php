@@ -18,12 +18,11 @@
     ];
     protected $createdField = 'invitation_created_at';
     protected $updatedField  = 'invitation_updated_at';
-    protected $expiresField = 'invitation_expires_at';
     protected $useTimestamps = true;
+    protected $dateFormat = 'datetime';
 
     public function isInvitationValid($invitation_code){
       return $this->where('invitation_code', $invitation_code)
-        ->where('invitation_expires_at >', date('Y-m-d H:i:s'))
         ->where('invitation_used', 0)
         ->first();
     }
