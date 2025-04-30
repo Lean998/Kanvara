@@ -41,10 +41,13 @@
     }
 
     public function obtenerSubtarea($subtaskId){
-      return $this->select('subtasks.*, users.user_name')
+      $subtask = $this->select('subtasks.*, users.user_name')
       ->join('users', 'users.user_id = subtasks.user_id', 'left')
       ->where('subtask_id', $subtaskId)
       ->first();
+      $collaborationSubtaskModel = new collaborationSubtaskModel();
+      $subtask['colaboradores'] = $collaborationSubtaskModel->getColaboradores($subtask['subtask_id']);
+      return $subtask;
     }
   }
 ?>
