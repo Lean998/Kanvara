@@ -196,21 +196,23 @@
         return view('tarea/aceptar_invitacion', $data);
       }
 
-      $invitationModel->deleteExpiredInvitations();
+      
       $invitationCode = $this->request->getPost('invitation_code');
       $invitation = $invitationModel->isInvitationValid($invitationCode);
-
-      $existingInvitation = $invitationModel->where('invitation_code', $invitationCode)->first();
-      if ($existingInvitation && $existingInvitation['invitation_expires_at'] <= date('Y-m-d H:i:s')) {
-          $data['errors']['invitation_code'] = 'La invitación ha expirado.';
-          return view('tarea/aceptar_invitacion', $data);
-      }
 
       if(!$invitation){
         $data['errors']['invitation_code'] = 'El código es inválido, ha expirado o ya fue usado.';
         return view('tarea/aceptar_invitacion', $data);
       }
 
+      if ($invitation['invitation_expires_at'] < date('Y-m-d H:i:s')) {
+          $invitationModel->deleteExpiredInvitations();
+          $data['errors']['invitation_code'] = 'La invitación ha expirado.';
+          return view('tarea/aceptar_invitacion', $data);
+      }
+
+      $invitationModel->deleteExpiredInvitations();
+      
       $taskId = $invitation['task_id'];
 
       $userEmail = session('user_email'); 
