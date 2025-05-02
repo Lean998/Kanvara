@@ -46,7 +46,6 @@
       
       return redirect()->to(base_url() . 'tareas/ver/'.$taskId)->with('success', 'Subtarea creada correctamente.');
     }
-
     public function postCambiarEstado(){
       $subtaskModel = new SubTaskModel();
       $subtaskId = $this->request->getPost('subtask_id');
@@ -67,13 +66,13 @@
       $subtaskModel->update($subtaskId, ['subtask_state' => $nuevoEstado]);
       return redirect()->back()->with('success', 'Estado actualizado correctamente.');
     }
-
     public function getEditarSubtarea(){
       $subtaskModel = new SubTaskModel();
       $subtask = $subtaskModel->obtenerSubtarea($this->request->getGet('subtask'));
       $taskModel = new TaskModel();
+      $collaborationSubtaskModel = new collaborationSubtaskModel();
       $task = $taskModel->obtenerTarea($subtask['task_id']);
-      if(session('user_id') != $subtask['user_id'] AND session('user_id') != $task['user_id']){
+      if($collaborationSubtaskModel->isResponsable($subtask['subtask_id'], session('user_id')) AND session('user_id') != $task['user_id']){
         return redirect()->back()->withInput()->with('error', 'No tienes permisos para realizar esta acción.');
       }
       $collab = new CollaborationModel();
@@ -84,7 +83,6 @@
       ];
       return view('subtarea/editar', $data);
     }
-
     public function postEditarSubtarea(){
       $subtaskModel = new SubTaskModel();
 
@@ -121,7 +119,6 @@
           return redirect()->back()->withInput()->with('error', 'Hubo un problema al actualizar la subtarea.');
       }
     }
-
     public function postEliminarSubtarea(){
       $subtaskToDelete = $this->request->getPost('subtask_id');
       $subtaskModel = new SubTaskModel();
@@ -195,5 +192,4 @@
       return redirect()->to('tareas/ver/' . $taskId )->with('success', 'Se ha agregado al colaborador con exito.');
     }
   }
-
 ?>
