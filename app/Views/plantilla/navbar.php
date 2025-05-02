@@ -1,11 +1,15 @@
+<!-- Navbar -->
+<link rel="stylesheet" href="<?php base_url('public/css/navbar.css') ?> ">
 <nav class="navbar navbar-dark bg-dark">
     <div class="container-fluid">
         <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
+        
     </div>
 </nav>
 
+<!-- Offcanvas para el menú hamburguesa -->
 <div class="offcanvas offcanvas-start bg-dark text-light" tabindex="-1" id="sidebarMenu" aria-labelledby="sidebarMenuLabel">
     <div class="offcanvas-header">
         <h5 class="offcanvas-title text-light" id="sidebarMenuLabel">Menú</h5>
@@ -30,39 +34,5 @@
 </div>
 
 <style>
-      /* Ajustes para el sidebar y el contenido principal */
-@media (max-width: 991.98px) { /* Punto de ruptura lg */
-    .main-content {
-        margin-left: 0 !important;
-    }
-    .container-fluid {
-        margin-left: 0 !important;
-    }
-    .container {
-        padding: 0.5rem; /* Reducir padding en pantallas pequeñas */
-    }
-}
 
-/* Estilos del sidebar */
-.nav-link.active {
-    background-color: #495057;
-    border-radius: 5px;
-}
-.nav-link:hover {
-    background-color: #6c757d;
-    border-radius: 5px;
-}
-#sidebar.collapsed {
-    width: 60px;
-    overflow: hidden;
-}
-#sidebar.collapsed .sidebar-content {
-    display: none;
-}
-#sidebar.collapsed h4 {
-    display: none;
-}
-.main-content.collapsed {
-    margin-left: 60px !important;
-}
 </style>
