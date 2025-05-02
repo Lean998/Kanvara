@@ -115,7 +115,7 @@ document.getElementById('btnConfirmarArchivar').addEventListener('click', functi
     if (!tareaArchivar) return;
 
     const taskIdArchivar = tareaArchivar.dataset.taskId;
-    fetch('tareas/archivar', {
+    fetch(`${BASE_URL}tareas/archivar`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
