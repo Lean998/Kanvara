@@ -56,11 +56,26 @@
       $task['colaboradores'] = $collaborationModel -> where ('task_id', $tareaId) -> findAll();
       return $task;
     }
-    public function obtenerTareas($userId){
-      $tasks = $this->where('user_id', $userId) 
-      -> where ('task_archived',0) 
-      ->where('task_deleted_at IS NULL')
-      -> orderBy ('task_expiry', 'ASC') -> findAll();
+    public function obtenerTareas($userId, $ordenar = "", $orden = "ASC"){
+      if($ordenar === "task_priority"){
+        $tasks = $this->where('user_id', $userId) 
+        -> where ('task_archived',0) 
+        ->where('task_deleted_at IS NULL')
+        ->orderBy("FIELD(task_priority, 'Alta', 'Media', 'Baja')")
+        -> findAll();
+      } else if(!empty($ordenar)) {
+        $tasks = $this->where('user_id', $userId) 
+        -> where ('task_archived',0) 
+        ->where('task_deleted_at IS NULL')
+        ->orderBy($ordenar, $orden)
+        -> findAll();
+      } else{
+        $tasks = $this->where('user_id', $userId) 
+        -> where ('task_archived',0) 
+        ->where('task_deleted_at IS NULL')
+        -> findAll();
+      }
+      
       $subTaskModel = new SubTaskModel();
 
       foreach ($tasks as $index => $task) {
@@ -70,41 +85,81 @@
       return $tasks;
     }
 
-    public function obtenerTareasEliminadas($userId){
-      $tasks = $this->onlyDeleted()
-      ->where('user_id', $userId) 
-      -> where ('task_archived',0) 
-      -> orderBy ('task_expiry', 'ASC') -> findAll();
-      $subTaskModel = new SubTaskModel();
-
-      foreach ($tasks as $index => $task) {
-        $tasks[$index]['subtasks'] = $subTaskModel -> where('task_id', $task['task_id']) -> findAll();
+      public function obtenerTareasEliminadas($userId, $ordenar = "", $orden = "ASC"){
+        if($ordenar === 'task_priority'){
+          $tasks = $this->onlyDeleted()
+          ->where('user_id', $userId) 
+          -> where ('task_archived',0) 
+          -> orderBy ("FIELD(task_priority, 'Alta', 'Media', 'Baja')")
+          -> findAll();
+        } else if(!empty($ordenar)) {
+          $tasks = $this->onlyDeleted()
+          ->where('user_id', $userId) 
+          -> where ('task_archived',0) 
+          -> orderBy ($ordenar, $orden)
+          -> findAll();
+        } else{
+          $tasks = $this->onlyDeleted()
+          ->where('user_id', $userId) 
+          -> where ('task_archived',0) 
+          -> findAll();
+        }
+        $subTaskModel = new SubTaskModel();
+        foreach ($tasks as $index => $task) {
+          $tasks[$index]['subtasks'] = $subTaskModel -> where('task_id', $task['task_id']) -> findAll();
+        }
+        return $tasks;
       }
-
-      return $tasks;
-    }
-    public function obtenerTareasArchivadas($userId){
-      $tasks = $this->where('user_id', $userId)
+    public function obtenerTareasArchivadas($userId, $ordenar = "", $orden = "ASC"){
+      if($ordenar === "task_priority"){
+        $tasks = $this->where('user_id', $userId)
           ->where('task_archived', 1)
-          ->orderBy('task_expiry', 'ASC')
+          ->orderBy("FIELD(task_priority, 'Alta', 'Media', 'Baja')")
           ->findAll();
-      
+      } else if(!empty($ordenar)) {
+        $tasks = $this->where('user_id', $userId)
+          ->where('task_archived', 1)
+          ->orderBy($ordenar, $orden)
+          ->findAll();
+      } else{
+        $tasks = $this->where('user_id', $userId)
+          ->where('task_archived', 1)
+          ->findAll();
+      }
+
       $subTaskModel = new SubTaskModel();
-      
-      
       foreach ($tasks as $index => $task) {
           $subtasks = $subTaskModel->where('task_id', $task['task_id'])->findAll();
           $tasks[$index]['subtasks'] = $subtasks;
       }
       return $tasks;
     }
-    public function obtenerTareasCompartidas($userId){
-      $tasks = $this->select('tasks.*')
-            ->join('collaborations', 'collaborations.task_id = tasks.task_id', 'left')
-            ->where('collaborations.user_id', $userId)
-            ->where('tasks.task_deleted_at IS NULL')
-            ->where('tasks.task_archived', 0)
-            ->findAll();
+    public function obtenerTareasCompartidas($userId, $ordenar = "", $orden="ASC"){
+      if($ordenar === 'task_priority'){
+        $tasks = $this->select('tasks.*')
+        ->join('collaborations', 'collaborations.task_id = tasks.task_id', 'left')
+        ->where('collaborations.user_id', $userId)
+        ->where('tasks.task_archived', 0)
+        ->where('tasks.task_deleted_at IS NULL')
+        ->orderBy("FIELD(task_priority, 'Alta', 'Media', 'Baja')")
+        ->findAll();
+      } else if(!empty($ordenar)){
+        $tasks = $this->select('tasks.*')
+        ->join('collaborations', 'collaborations.task_id = tasks.task_id', 'left')
+        ->where('collaborations.user_id', $userId)
+        ->where('tasks.task_archived', 0)
+        ->where('tasks.task_deleted_at IS NULL')
+        ->orderBy($ordenar, $orden)
+        ->findAll();
+      }
+      else {
+        $tasks = $this->select('tasks.*')
+        ->join('collaborations', 'collaborations.task_id = tasks.task_id', 'left')
+        ->where('collaborations.user_id', $userId)
+        ->where('tasks.task_deleted_at IS NULL')
+        ->where('tasks.task_archived', 0)
+        ->findAll();
+      } 
       $subTaskModel = new SubTaskModel();
       foreach ($tasks as $index => $task) {
         $tasks[$index]['subtasks'] = $subTaskModel -> where('task_id', $task['task_id']) -> findAll();
