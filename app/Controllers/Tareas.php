@@ -39,42 +39,59 @@
 
     public function getTareasCompartidas(){
       $taskModel = new TaskModel();
-      $task = $taskModel->obtenerTareasCompartidas(session('user_id'));
+      $ordenar = $this->request->getGet('ordenar');
+      if(!empty($ordenar)){
+        $orden = ($ordenar === 'task_priority') ? 'DESC' : 'ASC';
+        $task = $taskModel->obtenerTareasCompartidas(session('user_id'), $ordenar, $orden);
+      } else {
+        $task = $taskModel->obtenerTareasCompartidas(session('user_id'));
+      }
 
       $data = [
         'titulo' => 'Tarea',
         'tasks' => $task,
         'subtitulo' => 'Tareas compartidas contigo',
       ];
-      session()->set('opcion', 'compartidas');
+      session()->set('opcion', 'tareas/tareas-compartidas');
       helper('form');
       return view('index', $data);
     }
 
     public function getTareasArchivadas(){
       $taskModel = new TaskModel();
-      $task = $taskModel->obtenerTareasArchivadas(session('user_id'));
+      $ordenar = $this->request->getGet('ordenar');
+      if(!empty($ordenar)){
+        $orden = ($ordenar === 'task_priority') ? 'DESC' : 'ASC';
+        $task = $taskModel->obtenerTareasArchivadas(session('user_id'), $ordenar, $orden);
+      } else {
+        $task = $taskModel->obtenerTareasArchivadas(session('user_id'));
+      }
 
       $data = [
         'titulo' => 'Tarea',
         'tasks' => $task,
         'subtitulo' => 'Tus tareas archivadas',
       ];
-      session()->set('opcion', 'archivadas');
+      session()->set('opcion', 'tareas/tareas-archivadas');
       helper('form');
       return view('index', $data);
     }
 
     public function getTareasEliminadas(){
       $taskModel = new TaskModel();
-      $task = $taskModel->obtenerTareasEliminadas(session('user_id'));
-
+      $ordenar = $this->request->getGet('ordenar');
+      if(!empty($ordenar)){
+        $orden = ($ordenar === 'task_priority') ? 'DESC' : 'ASC';
+        $task = $taskModel->obtenerTareasEliminadas(session('user_id'), $ordenar, $orden);
+      } else{
+        $task = $taskModel->obtenerTareasEliminadas(session('user_id'));
+      }
       $data = [
         'titulo' => 'Tarea',
         'tasks' => $task,
         'subtitulo' => 'Tus tareas eliminadas',
       ];
-      session()->set('opcion', 'eliminadas');
+      session()->set('opcion', 'tareas/tareas-eliminadas');
       helper('form');
       return view('index', $data);
     }
