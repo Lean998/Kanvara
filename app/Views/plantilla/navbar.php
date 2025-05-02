@@ -17,13 +17,13 @@
                 <a class="nav-link text-light <?= session('opcion') == '' ? 'active' : '' ?>" href="<?= base_url() ?>">Mis Tareas</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-light <?= session('opcion') == 'compartidas' ? 'active' : '' ?>" href="<?= base_url('tareas/tareas-compartidas') ?>">Compartidas conmigo</a>
+                <a class="nav-link text-light <?= session('opcion') == 'tareas/tareas-compartidas' ? 'active' : '' ?>" href="<?= base_url('tareas/tareas-compartidas') ?>">Compartidas conmigo</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-light <?= session('opcion') == 'archivadas' ? 'active' : '' ?>" href="<?= base_url('tareas/tareas-archivadas') ?>">Archivadas</a>
+                <a class="nav-link text-light <?= session('opcion') == 'tareas/tareas-archivadas' ? 'active' : '' ?>" href="<?= base_url('tareas/tareas-archivadas') ?>">Archivadas</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-light <?= session('opcion') == 'eliminadas' ? 'active' : '' ?>" href="<?= base_url('tareas/tareas-eliminadas') ?>">Eliminadas</a>
+                <a class="nav-link text-light <?= session('opcion') == 'tareas/tareas-eliminadas' ? 'active' : '' ?>" href="<?= base_url('tareas/tareas-eliminadas') ?>">Eliminadas</a>
             </li>
         </ul>
     </div>
