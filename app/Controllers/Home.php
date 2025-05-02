@@ -16,12 +16,12 @@ class Home extends BaseController {
     }
 
     $data = [
-      'titulo' => 'Mi tarea',
-      'descripcion' => 'Tarea de prueba',
-      'vencimiento' => date('d-m-y'),
+      'titulo' => 'Inicio',
+      'subtitulo' => 'Tus tareas',
       'tasks' => $tasks
     ];
       
+    session()->set('opcion', '');
     return view('index', $data);
     }
 }
