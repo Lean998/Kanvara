@@ -72,7 +72,7 @@
         'tasks' => $task,
         'subtitulo' => 'Tus tareas archivadas',
       ];
-      session()->set('opcion', 'tareas/tareas-archivadas');
+      session()->set('opcion','tareas/tareas-archivadas');
       helper('form');
       return view('index', $data);
     }
@@ -91,7 +91,7 @@
         'tasks' => $task,
         'subtitulo' => 'Tus tareas eliminadas',
       ];
-      session()->set('opcion', 'tareas/tareas-eliminadas');
+      session()->set('opcion','tareas/tareas-eliminadas');
       helper('form');
       return view('index', $data);
     }
