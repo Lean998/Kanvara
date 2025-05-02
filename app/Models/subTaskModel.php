@@ -37,12 +37,14 @@
       return $this->select('subtasks.*, users.user_name')
         ->join('users', 'users.user_id = subtasks.user_id', "left")
         ->where('task_id', $taskId)
+        ->where('subtask_deleted_at IS NULL')
         ->findAll();
     }
 
     public function obtenerSubtarea($subtaskId){
       $subtask = $this->select('subtasks.*, users.user_name')
       ->join('users', 'users.user_id = subtasks.user_id', 'left')
+      ->where('subtask_deleted_at IS NULL')
       ->where('subtask_id', $subtaskId)
       ->first();
       $collaborationSubtaskModel = new collaborationSubtaskModel();
