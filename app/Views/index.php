@@ -113,8 +113,9 @@
 <?= $this->endSection() ?>
 <?= $this->section('contenido') ?>
 
+
 <div class="container d-flex justify-content-between align-items-center my-2">
-  <h2 class="text-center">Tus tareas</h2>
+  <h2 class="text-center"><?= $subtitulo?></h2>
   <div>
     <button type="button" class="btn btn-primary m-2 rounded-3" data-bs-toggle="modal" data-bs-target="#newTask">
       Nueva Tarea
@@ -130,44 +131,74 @@
 </div>
 
   <div class="container bg-dark p-3 text-light rounded-3">
+    <?php if (!empty($tasks)): ?>
     <?php foreach ($tasks as $task): ?>
     
-      <div class="card mb-3 text-light p-3  rounded-3" style="background-color:<?= $task['task_color'] ?>">
-        <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 p-3">
-          <a href="tareas/ver/<?= $task['task_id']?>" style="text-decoration: none; color: inherit;">
-            <div class="d-flex flex-column justify-content-between">
-              <div>
-                <h5 class="mb-1"> <?= esc($task['task_title'])?></h5>
-                <p class="mb-1 text-break"><?= esc($task['task_desc']) ?></p>
-              </div>
-              <span class="badge bg-<?= $task['task_priority'] === 'Alta' ? 'danger' : ($task['task_priority'] === 'Media' ? 'warning' : 'success') ?> w-100 text-center mb-2"> Prioridad <?= esc( " ".$task['task_priority']) ?></span>
-            </div>
-          </a>
-          
-          <div class="w-50">
-            <a href="tareas/ver/<?= $task['task_id']?>" style="text-decoration: none; color: inherit;">
-            <h6 class="mb-2">Subtareas</h6>
-            <ul class="list-group list-group-flush">
-              <?php foreach ($task['subtasks'] as $sub): ?>
-                <li class="list-group-item  border-light p-1 text-light" style="background-color:<?= $task['task_color'] ?>">
-                  <?= esc($sub['subtask_desc']) . ' | <strong>Estado: </strong>  ' . esc($sub['subtask_state']) ?> 
-                </li>
-              <?php endforeach; ?>
-            </ul>
+      <div class="card mb-3 text-light rounded-3" style="background-color:<?= $task['task_color'] ?>">
+    <div class="row g-3 p-3">
+        <!-- Sección del título y descripción -->
+        <?php if (session('opcion') != 'eliminadas') :?>
+          <div class="col-12 col-md-6 col-lg-4">
+            <a href="<?= base_url('tareas/ver/' .$task['task_id']) ?>" style="text-decoration: none; color: inherit;">
+                <div class="d-flex flex-column">
+                    <h5 class="mb-1"><?= esc($task['task_title'])?></h5>
+                    <p class="mb-1 text-break"><?= esc($task['task_desc']) ?></p>
+                    <span class="badge bg-<?= $task['task_priority'] === 'Alta' ? 'danger' : ($task['task_priority'] === 'Media' ? 'warning' : 'success') ?> w-100 text-center mb-2"> Prioridad <?= esc(" ".$task['task_priority']) ?></span>
+                </div>
             </a>
           </div>
-            
-          <div class="d-flex flex-column align-items-center justify-content-between text-end">
-            <p class="mb-2">🕒 Vence: <strong> <?= esc($task['task_expiry']) ?> </strong></p>
-            <div class="btn-group mb-2" role="group">
-              <button class="btn btn-editar btn-sm btn-outline-light" data-task-id="<?= $task['task_id'] ?>" >✏️ Editar</button>
-              <button class="btn btn-eliminar btn-sm btn-outline-light" data-task-id="<?= $task['task_id'] ?>">🗑️ Eliminar</button>
-              <button class="btn btn-archivar btn-sm btn-outline-light" data-task-id="<?= $task['task_id'] ?>">📦 Archivar</button>
-            </div>
+        <?php else: ?>
+          <div class="col-12 col-md-6 col-lg-4">
+                <div class="d-flex flex-column">
+                    <h5 class="mb-1"><?= esc($task['task_title'])?></h5>
+                    <p class="mb-1 text-break"><?= esc($task['task_desc']) ?></p>
+                    <span class="badge bg-<?= $task['task_priority'] === 'Alta' ? 'danger' : ($task['task_priority'] === 'Media' ? 'warning' : 'success') ?> w-100 text-center mb-2"> Prioridad <?= esc(" ".$task['task_priority']) ?></span>
+                </div>
           </div>
+        <?php endif; ?>
+
+        <!-- Sección de subtareas -->
+        <?php if (session('opcion') != 'eliminadas') : ?>
+        <div class="col-12 col-md-6 col-lg-5">
+            <a  href="<?= base_url('tareas/ver/' .$task['task_id']) ?>" style="text-decoration: none; color: inherit;">
+                <h6 class="mb-2">Subtareas</h6>
+                <ul class="list-group list-group-flush">
+                    <?php foreach ($task['subtasks'] as $sub): ?>
+                        <li class="list-group-item border-light p-1 text-light" style="background-color:<?= $task['task_color'] ?>">
+                            <?= esc($sub['subtask_desc']) . ' | <strong>Estado: </strong>  ' . esc($sub['subtask_state']) ?> 
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </a>
         </div>
-      </div>
+        <?php else: ?>
+          <div class="col-12 col-md-6 col-lg-5">
+                <h6 class="mb-2">Subtareas</h6>
+                <ul class="list-group list-group-flush">
+                    <?php foreach ($task['subtasks'] as $sub): ?>
+                        <li class="list-group-item border-light p-1 text-light" style="background-color:<?= $task['task_color'] ?>">
+                            <?= esc($sub['subtask_desc']) . ' | <strong>Estado: </strong>  ' . esc($sub['subtask_state']) ?> 
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+        </div>
+        <?php endif; ?>
+
+        <!-- Sección de vencimiento y botones -->
+        <div class="col-12 col-lg-3 d-flex flex-column align-items-center justify-content-between text-end">
+            <p class="mb-2">🕒 Vence: <strong> <?= esc($task['task_expiry']) ?> </strong></p>
+            <div class="btn-group flex-wrap mb-2" role="group">
+                <button class="btn btn-editar btn-sm btn-outline-light" data-task-id="<?= $task['task_id'] ?>">✏️ Editar</button>
+                <button class="btn btn-eliminar btn-sm btn-outline-light" data-task-id="<?= $task['task_id'] ?>">🗑️ Eliminar</button>
+                <button class="btn btn-archivar btn-sm btn-outline-light" data-task-id="<?= $task['task_id'] ?>">📦 Archivar</button>
+            </div>
+        </div>
+    </div>
+</div>
     <?php endforeach; ?>
+    <?php else: ?>
+      <p>No tienes Tareas <?= session('opcion') ?></p>
+    <?php endif; ?>
   </div>
 
   <div class="modal fade" id="confirmarEliminarModal" tabindex="-1" aria-hidden="true">
@@ -253,6 +284,8 @@
     </div>
   </div>
 </div>
+
+
 <script>
   const BASE_URL = "<?= base_url() ?>";
 </script>
@@ -260,6 +293,7 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function () {
+    
     // Mostrar el modal si hay errores de validación
     <?php if (session('errors')): ?>
       var myModal = new bootstrap.Modal(document.getElementById('newTask'));
