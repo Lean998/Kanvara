@@ -116,13 +116,22 @@
 
 <div class="container d-flex justify-content-between align-items-center my-2">
   <h2 class="text-center"><?= $subtitulo?></h2>
-  <div>
+  <div class="d-flex justify-content-end align-items-center gap-2">
     <button type="button" class="btn btn-primary m-2 rounded-3" data-bs-toggle="modal" data-bs-target="#newTask">
       Nueva Tarea
     </button>
     <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#invitationModal">
       Tengo un Código de Invitación
     </button>
+    <div class="dropdown d-inline-block">
+      <button class="btn btn-outline-light btn-light text-dark dropdown-toggle" type="button" id="dropdownOrdenar" data-bs-toggle="dropdown" aria-expanded="false">
+        Ordenar
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="dropdownOrdenar">
+        <li><a class="dropdown-item" href="<?= base_url() . session('opcion') . '?ordenar=task_expiry' ?>">Por vencimiento</a></li>
+        <li><a class="dropdown-item" href="<?= base_url() . session('opcion') . '?ordenar=task_priority' ?>">Por prioridad</a></li>
+      </ul>
+    </div>
   </div>
 </div>
 
@@ -293,7 +302,7 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function () {
-    
+
     // Mostrar el modal si hay errores de validación
     <?php if (session('errors')): ?>
       var myModal = new bootstrap.Modal(document.getElementById('newTask'));
