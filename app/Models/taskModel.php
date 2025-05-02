@@ -57,8 +57,10 @@
       return $task;
     }
     public function obtenerTareas($userId){
-    
-      $tasks = $this -> where ('user_id', $userId) -> where ('task_archived',0) -> orderBy ('task_expiry', 'ASC') -> findAll();
+      $tasks = $this->where('user_id', $userId) 
+      -> where ('task_archived',0) 
+      ->where('task_deleted_at IS NULL')
+      -> orderBy ('task_expiry', 'ASC') -> findAll();
       $subTaskModel = new SubTaskModel();
 
       foreach ($tasks as $index => $task) {
@@ -67,5 +69,47 @@
 
       return $tasks;
     }
+
+    public function obtenerTareasEliminadas($userId){
+      $tasks = $this->onlyDeleted()
+      ->where('user_id', $userId) 
+      -> where ('task_archived',0) 
+      -> orderBy ('task_expiry', 'ASC') -> findAll();
+      $subTaskModel = new SubTaskModel();
+
+      foreach ($tasks as $index => $task) {
+        $tasks[$index]['subtasks'] = $subTaskModel -> where('task_id', $task['task_id']) -> findAll();
+      }
+
+      return $tasks;
+    }
+    public function obtenerTareasArchivadas($userId){
+      $tasks = $this->where('user_id', $userId)
+          ->where('task_archived', 1)
+          ->orderBy('task_expiry', 'ASC')
+          ->findAll();
+      
+      $subTaskModel = new SubTaskModel();
+      
+      
+      foreach ($tasks as $index => $task) {
+          $subtasks = $subTaskModel->where('task_id', $task['task_id'])->findAll();
+          $tasks[$index]['subtasks'] = $subtasks;
+      }
+      return $tasks;
+    }
+    public function obtenerTareasCompartidas($userId){
+      $tasks = $this->select('tasks.*')
+            ->join('collaborations', 'collaborations.task_id = tasks.task_id', 'left')
+            ->where('collaborations.user_id', $userId)
+            ->where('tasks.task_deleted_at IS NULL')
+            ->where('tasks.task_archived', 0)
+            ->findAll();
+      $subTaskModel = new SubTaskModel();
+      foreach ($tasks as $index => $task) {
+        $tasks[$index]['subtasks'] = $subTaskModel -> where('task_id', $task['task_id']) -> findAll();
+      }
+      return $tasks;
   }
+}
 ?>
