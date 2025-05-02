@@ -5,23 +5,18 @@
   use App\Models\InvitationModel;
   use App\Models\UserModel;
   use CodeIgniter\Config\Services;
+  use App\Controllers\session;
 
   class Tareas extends BaseController{
-    public function getIndex (){
-      
-    }
 
     public function getVer($taskId){
       $taskModel = new TaskModel();
       $task = $taskModel->obtenerTarea($taskId);
-
       if(!$task || $task == null){
         return $this->response->setJSON(['success' => false, 'message' => 'Tarea no encontrada']);
       }
 
       $collab = new CollaborationModel();
-      
-
       $data = [
         'titulo' => 'Tarea',
         'task' => $task,
@@ -36,10 +31,52 @@
       $task = $taskModel->obtenerTarea($taskId);
 
       if(!$task || $task == null){
-        return $this->response->setJSON(['success' => false, 'message' => 'Tarea no encontrada']);
+        return $this->response->setJSON(['success' => false, 'message' => 'Ocurrio un error al obtener sus tareas.']);
       }
 
       return $this->response->setJSON($task); 
+    }
+
+    public function getTareasCompartidas(){
+      $taskModel = new TaskModel();
+      $task = $taskModel->obtenerTareasCompartidas(session('user_id'));
+
+      $data = [
+        'titulo' => 'Tarea',
+        'tasks' => $task,
+        'subtitulo' => 'Tareas compartidas contigo',
+      ];
+      session()->set('opcion', 'compartidas');
+      helper('form');
+      return view('index', $data);
+    }
+
+    public function getTareasArchivadas(){
+      $taskModel = new TaskModel();
+      $task = $taskModel->obtenerTareasArchivadas(session('user_id'));
+
+      $data = [
+        'titulo' => 'Tarea',
+        'tasks' => $task,
+        'subtitulo' => 'Tus tareas archivadas',
+      ];
+      session()->set('opcion', 'archivadas');
+      helper('form');
+      return view('index', $data);
+    }
+
+    public function getTareasEliminadas(){
+      $taskModel = new TaskModel();
+      $task = $taskModel->obtenerTareasEliminadas(session('user_id'));
+
+      $data = [
+        'titulo' => 'Tarea',
+        'tasks' => $task,
+        'subtitulo' => 'Tus tareas eliminadas',
+      ];
+      session()->set('opcion', 'eliminadas');
+      helper('form');
+      return view('index', $data);
     }
     public function postArchivar(){
       $id = $this->request->getPost('task_id');
