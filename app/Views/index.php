@@ -343,5 +343,4 @@
     mostrarMensaje('mensaje-success', <?= json_encode(session('success')) ?>, 'success');
   <?php endif ?>
 </script>
-
 <?= $this->endSection() ?>
