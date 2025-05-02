@@ -148,7 +148,7 @@
       <div class="card mb-3 text-light rounded-3" style="background-color:<?= $task['task_color'] ?>">
         <div class="row g-3 p-3">
             <!-- Sección del título y descripción -->
-            <?php if (session('opcion') != 'eliminadas') :?>
+            <?php if (session('opcion') !== 'tareas/tareas-eliminadas' ): ?>
               <div class="col-12 col-md-6 col-lg-4">
                 <a href="<?= base_url('tareas/ver/' .$task['task_id']) ?>" style="text-decoration: none; color: inherit;">
                     <div class="d-flex flex-column">
@@ -169,7 +169,7 @@
             <?php endif; ?>
 
             <!-- Sección de subtareas -->
-            <?php if (session('opcion') != 'eliminadas') : ?>
+            <?php if (session('opcion') !== 'tareas/tareas-eliminadas' ): ?>
             <div class="col-12 col-md-6 col-lg-5">
                 <a  href="<?= base_url('tareas/ver/' .$task['task_id']) ?>" style="text-decoration: none; color: inherit;">
                     <h6 class="mb-2">Subtareas</h6>
@@ -337,7 +337,7 @@
     checkbox.addEventListener('change', toggleReminderFields);
   });
 </script>
-
+<script src="<?= base_url('public/scripts/funcionesTarea.js') ?>"></script>
 <script>
   <?php if (session('success')): ?>
     mostrarMensaje('mensaje-success', <?= json_encode(session('success')) ?>, 'success');
