@@ -61,7 +61,7 @@
         $tasks = $this->where('user_id', $userId) 
         -> where ('task_archived',0) 
         ->where('task_deleted_at IS NULL')
-        ->orderBy("FIELD(task_priority, 'Alta', 'Media', 'Baja')")
+        ->orderBy("FIELD(task_priority, 'Alta', 'Normal', 'Baja')")
         -> findAll();
       } else if(!empty($ordenar)) {
         $tasks = $this->where('user_id', $userId) 
@@ -90,7 +90,7 @@
           $tasks = $this->onlyDeleted()
           ->where('user_id', $userId) 
           -> where ('task_archived',0) 
-          -> orderBy ("FIELD(task_priority, 'Alta', 'Media', 'Baja')")
+          -> orderBy ("FIELD(task_priority, 'Alta', 'Normal', 'Baja')")
           -> findAll();
         } else if(!empty($ordenar)) {
           $tasks = $this->onlyDeleted()
@@ -114,7 +114,7 @@
       if($ordenar === "task_priority"){
         $tasks = $this->where('user_id', $userId)
           ->where('task_archived', 1)
-          ->orderBy("FIELD(task_priority, 'Alta', 'Media', 'Baja')")
+          ->orderBy("FIELD(task_priority, 'Alta', 'Normal', 'Baja')")
           ->findAll();
       } else if(!empty($ordenar)) {
         $tasks = $this->where('user_id', $userId)
@@ -141,7 +141,7 @@
         ->where('collaborations.user_id', $userId)
         ->where('tasks.task_archived', 0)
         ->where('tasks.task_deleted_at IS NULL')
-        ->orderBy("FIELD(task_priority, 'Alta', 'Media', 'Baja')")
+        ->orderBy("FIELD(task_priority, 'Alta', 'Normal', 'Baja')")
         ->findAll();
       } else if(!empty($ordenar)){
         $tasks = $this->select('tasks.*')
