@@ -62,6 +62,7 @@ if (!session('user_id'))  {
         <button class="btn btn-eliminar btn-sm btn-outline-dark" data-task-id="<?= $task['task_id'] ?>">🗑️ Eliminar</button>
         <button class="btn btn-archivar btn-sm btn-outline-dark" data-task-id="<?= $task['task_id'] ?>">📦 Archivar</button>
         <button type="button" class="btn btn-sm btn-outline-dark" data-bs-toggle="modal" data-bs-target="#newtaskCollaborator">Agregar Colaborador</button>
+        <button class="btn btn-newSubtask btn-sm btn-outline-dark" data-bs-toggle="modal" data-bs-target="#newSubtask" data-task-id="<?= $task['task_id'] ?>">➕ Nueva Subtarea</button>
       </div>
     </div>
 
