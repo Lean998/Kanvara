@@ -19,7 +19,7 @@ use App\Models\UserModel;
       <h3 class="mb-0"><?= esc($task['task_title']) ?></h3>
       <div class="text-end">
         <p class="mb-1">🕒 <strong>Vence:</strong> <?= date('d/m/Y', strtotime($task['task_expiry'])) ?></p>
-        <span class="badge bg-<?= $task['task_priority'] === 'Alta' ? 'danger' : ($task['task_priority'] === 'Media' ? 'warning' : 'success') ?> w-100 text-center mb-2"> Prioridad <?= esc( " ".$task['task_priority']) ?></span>
+        <span class="badge bg-<?= $task['task_priority'] === 'Alta' ? 'danger' : ($task['task_priority'] === 'Normal' ? 'warning' : 'success') ?> w-100 text-center mb-2"> Prioridad <?= esc( " ".$task['task_priority']) ?></span>
       </div>
     </div>
 
