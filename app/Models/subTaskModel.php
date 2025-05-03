@@ -34,11 +34,23 @@
     protected $useTimestamps = true;
 
     public function obtenerSubtareas($taskId){
-      return $this->select('subtasks.*, users.user_name')
+      $subtaks = $this->select('subtasks.*, users.user_name')
         ->join('users', 'users.user_id = subtasks.user_id', "left")
         ->where('task_id', $taskId)
         ->where('subtask_deleted_at IS NULL')
         ->findAll();
+
+        $collaborationSubtaskModel = new collaborationSubtaskModel();
+        $commentsModel = new CommentsModel();
+        foreach ($subtaks as $index => $subtak) {
+          $subtaks[$index]['colaboradores'] = $collaborationSubtaskModel->getColaboradores($subtak['subtask_id']);
+        }
+
+        foreach ($subtaks as $index => $subtak) {
+          $subtaks[$index]['comentarios'] = $commentsModel->getComentariosSubtarea($subtak['subtask_id']);
+        }
+
+        return $subtaks;
     }
 
     public function obtenerSubtarea($subtaskId){
@@ -48,7 +60,9 @@
       ->where('subtask_id', $subtaskId)
       ->first();
       $collaborationSubtaskModel = new collaborationSubtaskModel();
+      $commentsModel = new CommentsModel();
       $subtask['colaboradores'] = $collaborationSubtaskModel->getColaboradores($subtask['subtask_id']);
+      $subtask['comentarios'] = $commentsModel->getComentariosSubtarea($subtask['subtask_id']);
       return $subtask;
     }
   }
