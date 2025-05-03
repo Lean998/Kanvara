@@ -20,7 +20,6 @@
     protected $createdField = 'collaboration_subtask_created_at';
     protected $updatedField = 'collaboration_subtask_updated_at';
     protected $useTimestamps = true;
-    protected $useSoftDeletes = true;
 
     public function getColaboradores($subtaskId){
       return $this->select('users.user_id, users.user_name')
