@@ -46,6 +46,14 @@
       
       return redirect()->to(base_url() . 'tareas/ver/'.$taskId)->with('success', 'Subtarea creada correctamente.');
     }
+    public function postEliminarColaborador(){
+      $collaborationSubtaskModel = new collaborationSubtaskModel();
+      $colaborador = $this->request->getPost('id');
+      if(!$collaborationSubtaskModel->where('user_id', $colaborador)->delete()){
+        return redirect()->back()->with('error', 'Ocurrio un errro al eliminar al colaborador.');
+      }
+      return redirect()->back()->with('success', 'Colaborador eliminado correctamente.');
+    }
     public function postCambiarEstado(){
       $subtaskModel = new SubTaskModel();
       $subtaskId = $this->request->getPost('subtask_id');
