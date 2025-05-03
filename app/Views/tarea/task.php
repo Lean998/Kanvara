@@ -33,8 +33,9 @@ if (!session('user_id'))  {
                     data-state="<?= esc($sub['subtask_state']) ?>"
                     data-priority="<?= esc($sub['subtask_priority']) ?>"
                     data-expiry="<?= esc($sub['subtask_expiry']) ?>"
-                    data-comment="<?= esc($sub['subtask_comment']) ?>"
+                    data-comments='<?= htmlspecialchars(json_encode($sub["comentarios"] ?? []), ENT_QUOTES, "UTF-8") ?>'
                     data-responsible="<?= $sub['user_id'] != null ? $sub['user_name'] : 'Sin responsable' ?>"
+                    data-collaborators='<?= htmlspecialchars(json_encode($sub["colaboradores"] ?? []), ENT_QUOTES, "UTF-8") ?>'
                     data-id="<?= esc($sub['subtask_id'])?>">
                     <?= esc(data: $sub['subtask_desc']) ?> | <strong>Estado:</strong> <?= esc($sub['subtask_state']) ?>
               </span>
@@ -122,6 +123,7 @@ if (!session('user_id'))  {
     </div>
   </div>
 </div>
+
 
 <div class="modal fade" id="newSubtask" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -224,7 +226,14 @@ if (!session('user_id'))  {
         <p><strong>Estado:</strong> <span id="modalSubtaskState"></span></p>
         <p><strong>Prioridad:</strong> <span id="modalSubtaskPriority"></span></p>
         <p><strong>Vencimiento:</strong> <span id="modalSubtaskExpiry"></span></p>
-        <p class="text-break"><strong>Comentario:</strong> <span id="modalSubtaskComment"></span></p>
+        <div class="mb-3">
+          <strong>Comentarios:</strong>
+          <ul id="modalSubtaskComments" class="list-group list-group-flush"></ul>
+        </div>
+        <div class="mb-3">
+          <strong>Colaboradores:</strong>
+          <ul id="modalSubtaskCollaborators" class="list-group list-group-flush"></ul>
+        </div>
         <p><strong>Responsable:</strong> <span id="modalSubtaskResponsible"></span></p>
       </div>
       <div class="modal-footer flex-wrap gap-2">
@@ -248,7 +257,7 @@ if (!session('user_id'))  {
       </div>
     </div>
   </div>
-</div>  
+</div>
 
 <!-- Modal Colaborador Tarea-->
 <div class="modal fade" id="newtaskCollaborator" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="newtaskCollaboratorLabel" aria-hidden="true">
@@ -276,9 +285,28 @@ if (!session('user_id'))  {
   </div>
 </div>
 
-<script>
-  const BASE_URL = "<?= base_url() ?>";
-</script>
+
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-light">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmDeleteLabel">Confirmar eliminación</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        ¿Estás seguro de que querés eliminar este elemento?
+      </div>
+      <div class="modal-footer">
+        <form id="deleteForm" method="POST">
+          <input type="hidden" name="id" id="deleteElementId">
+          <button type="submit" class="btn btn-danger">Eliminar</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="<?= base_url('public/scripts/funcionesTarea.js') ?>"></script>
 <script src="<?= base_url('public/scripts/funcionesSubtarea.js') ?>"></script>
 <script>
