@@ -1,6 +1,7 @@
 <?php
   namespace App\Controllers;
   use App\Models\CollaborationModel;
+  use App\Models\SubTaskModel;
   use App\Models\TaskModel;
   use App\Models\InvitationModel;
   use App\Models\UserModel;
@@ -140,6 +141,35 @@
 
       $deleted = $taskModel->delete($taskId);
       return $this->response->setJSON(['success' => $deleted]);
+    }
+
+    public function postFinalizar(){
+      $subtaskModel = new SubTaskModel();
+      $taskModel = new TaskModel();
+      $taskId = $this->request->getPost('task_id');
+      $subtareas = $subtaskModel->obtenerSubtareas($taskId);
+      $cont = 0;
+      if(empty($subtareas)){
+        if(!$taskModel->update($taskId, ['task_state' => 'Completada'])){
+          return $this->response->setJSON(['success' => false, 'message' => 'Ocurrio un error al momento de finalizar la tarea.']);
+        } else{
+          return $this->response->setJSON(['success' => false, 'warning' => true, 'message' => 'Esta tarea no contenia subtareas, pero se finalizara igualmente.']);
+        }
+      }
+      foreach($subtareas as $sub){
+        if($sub['subtask_state'] == "Completada"){
+          $cont++;
+        }
+      }
+      if($cont != sizeof($subtareas)){
+        return $this->response->setJSON(['success' => false, 'message' => 'Debe completar todas las subtareas antes de finalizar la tarea.']);
+      }
+
+      if(!$taskModel->update($taskId, ['task_state' => 'Completada'])){
+        return $this->response->setJSON(['success' => false, 'message' => 'Ocurrio un error al momento de finalizar la tarea.']);
+      } else{
+        return $this->response->setJSON(['success' => true, 'message' => 'Tarea finalizada con exito.']);
+      }
     }
     
     public function getNuevaTarea(){
