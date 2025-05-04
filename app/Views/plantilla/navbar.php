@@ -1,5 +1,7 @@
 <!-- Navbar -->
 <link rel="stylesheet" href="<?php base_url('public/css/navbar.css') ?> ">
+
+
 <nav class="navbar navbar-dark bg-dark">
     <div class="container-fluid">
         <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu">
@@ -29,10 +31,14 @@
             <li class="nav-item">
                 <a class="nav-link text-light <?= session('opcion') == 'tareas/tareas-eliminadas' ? 'active' : '' ?>" href="<?= base_url('tareas/tareas-eliminadas') ?>">Eliminadas</a>
             </li>
+            <li class="my-2"><div class="border-top border-light"></div></li>
+            <li class="nav-item">
+                <a class="nav-link text-light <?= session('opcion') == 'usuarios/mis-datos' ? 'active' : '' ?>" href="<?= base_url('usuarios/mis-datos') ?>">Mis datos</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-light" href="<?= base_url('auth/log-out') ?>">Cerrar sesion</a>
+            </li>
         </ul>
     </div>
 </div>
 
-<style>
-
-</style>
