@@ -93,7 +93,7 @@
     }
     public function postEditarSubtarea(){
       $subtaskModel = new SubTaskModel();
-
+      $taskModel = new TaskModel();
       $validation = \Config\Services::validation();
       $rules = [
         'subtaskDesc'    => 'required|min_length[5]',
@@ -107,10 +107,10 @@
       if (!$this->validate($rules)) {
           return redirect()->back()->withInput()->with('errors', $validation->getErrors());
       }
-
+      $estado = $this->request->getPost('subtaskState');
       $data = [
           'subtask_desc' => $this->request->getPost('subtaskDesc'),
-          'subtask_state' => $this->request->getPost('subtaskState'),
+          'subtask_state' => $estado,
           'subtask_priority' => $this->request->getPost('subtaskPriority'),
           'subtask_expiry' => $this->request->getPost('subtaskExpiry'),
           'subtask_comment' => $this->request->getPost('subtaskComment'),
@@ -122,6 +122,10 @@
 
       if ($subtaskModel->update($subtaskId, $data)) {
           $taskId = $this->request->getPost('task_id');
+          if($estado == 'Completada'){
+              $taskModel->update($taskId, ['task_state' => 'En proceso']);
+          }
+
           return redirect()->to('tareas/ver/' . $taskId )->with('success', 'Subtarea actualizada correctamente.');
       } else {
           return redirect()->back()->withInput()->with('error', 'Hubo un problema al actualizar la subtarea.');
