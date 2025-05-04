@@ -199,7 +199,7 @@
             <div class="col-12 col-lg-3 d-flex flex-column align-items-center align-items-lg-end justify-content-between text-center text-lg-end">
                 <div class="d-flex flex-column mb-5">
                   <p class="mb-2">🕒 Vence: <strong> <?= esc($task['task_expiry']) ?> </strong></p>
-                  <?php if($task['task_state'] != "Completada"): ?>
+                  <?php if($task['task_state'] != "Completada" ): ?>
                   <button class="btn btn-finalizar btn-sm btn-outline-light" data-task-id="<?= $task['task_id'] ?>">Finalizar</button>
                   <?php endif; ?>
                 </div>
