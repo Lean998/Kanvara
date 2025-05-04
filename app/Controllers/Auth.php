@@ -69,8 +69,6 @@
 
     public function getLogOut (){
       session()->destroy();
-      session_destroy();
-      $_SESSION = null;
       return view('auth/login');
     }
   } 
