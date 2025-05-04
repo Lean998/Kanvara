@@ -11,11 +11,20 @@ if (!session('user_id'))  {
 <section class="container mt-5">
   <article class="card text-light p-4 rounded-3" style="background-color:<?= $task['task_color'] ?>">
     
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start flex-wrap mb-4 gap-3">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start flex-wrap mb-4 gap-3 mx-0">
       <h3 class="mb-0 text-break"><?= esc($task['task_title']) ?></h3>
       <div class="text-center text-md-end">
-        <p class="mb-1">🕒 <strong>Vence:</strong> <?= date('d/m/Y', strtotime($task['task_expiry'])) ?></p>
-        <span class="badge bg-<?= $task['task_priority'] === 'Alta' ? 'danger' : ($task['task_priority'] === 'Normal' ? 'warning' : 'success') ?> w-100 text-center mb-2"> Prioridad <?= esc(" ".$task['task_priority']) ?></span>
+        <p class="mb-2 text-start"> Estado: <strong> <?= esc($task['task_state']) ?> </strong></p>
+        <div class="d-flex flex-column align-items-start mb-5">
+            <p class="mb-2">🕒 Vence: <strong> <?= esc($task['task_expiry']) ?> </strong></p>
+            <?php if ($task['task_reminder'] != null ): ?>
+              <p class="mb-2">🕒 Recordatorio: <?= esc($task['task_reminder']) ?></p>
+            <?php endif; ?>
+          <?php if($task['task_state'] != "Completada"): ?>
+          <button class="mb-2 btn w-100 btn-finalizar btn-sm btn-outline-dark btn-light" data-task-id="<?= $task['task_id'] ?>">Finalizar</button>
+          <?php endif; ?>
+          <span class="badge bg-<?= $task['task_priority'] === 'Alta' ? 'danger' : ($task['task_priority'] === 'Normal' ? 'warning' : 'success') ?> w-100 text-center mb-2"> Prioridad <?= esc(" ".$task['task_priority']) ?></span>
+        </div>
       </div>
     </div>
 
@@ -53,10 +62,7 @@ if (!session('user_id'))  {
         <p class="text-break mb-0"><?= esc($task['task_desc']) ?></p>
       </div>
       <div class="w-100 w-lg-25">
-        <?php if ($task['task_reminder'] != null ): ?>
-          <h5>🕒 Recordatorio</h5>
-          <p class="mb-0"><?= date('d/m/Y', strtotime($task['task_reminder'])) ?></p>
-        <?php endif; ?>
+        
       </div>
       <div class="btn-group bg-light rounded flex-wrap gap-2 w-100 w-lg-auto justify-content-center justify-content-lg-end" role="group">
         <button class="btn btn-editar btn-sm btn-outline-dark" data-task-id="<?= $task['task_id'] ?>">✏️ Editar</button>
@@ -305,6 +311,25 @@ if (!session('user_id'))  {
       </div>
     </div>
   </div>
+</div>
+
+<!-- Modal Confirmar Finalizar Tarea -->
+<div class="modal fade" id="confirmarFinalizarModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">¿Finalizar tarea?</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          ¿Estás seguro que deseas finalizar esta tarea?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button id="btnConfirmarFinalizar" type="button" class="btn btn-danger">Finalizar</button>
+        </div>
+      </div>
+    </div>
 </div>
 
 <script src="<?= base_url('public/scripts/funcionesTarea.js') ?>"></script>
