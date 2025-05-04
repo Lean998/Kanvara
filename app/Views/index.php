@@ -197,7 +197,12 @@
 
             <!-- Sección de vencimiento y botones -->
             <div class="col-12 col-lg-3 d-flex flex-column align-items-center align-items-lg-end justify-content-between text-center text-lg-end">
-                <p class="mb-2">🕒 Vence: <strong> <?= esc($task['task_expiry']) ?> </strong></p>
+                <div class="d-flex flex-column mb-5">
+                  <p class="mb-2">🕒 Vence: <strong> <?= esc($task['task_expiry']) ?> </strong></p>
+                  <?php if($task['task_state'] != "Completada"): ?>
+                  <button class="btn btn-finalizar btn-sm btn-outline-light" data-task-id="<?= $task['task_id'] ?>">Finalizar</button>
+                  <?php endif; ?>
+                </div>
                 <div class="btn-group flex-wrap mb-2 gap-2" role="group">
                     <button class="btn btn-editar btn-sm btn-outline-light" data-task-id="<?= $task['task_id'] ?>">✏️ Editar</button>
                     <?php if (session('opcion') !== 'tareas/tareas-eliminadas' ): ?>
@@ -232,6 +237,25 @@
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
           <button id="btnConfirmarEliminar" type="button" class="btn btn-danger">Eliminar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Confirmar Finalizar Tarea -->
+  <div class="modal fade" id="confirmarFinalizarModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">¿Finalizar tarea?</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          ¿Estás seguro que deseas finalizar esta tarea?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button id="btnConfirmarFinalizar" type="button" class="btn btn-danger">Finalizar</button>
         </div>
       </div>
     </div>
