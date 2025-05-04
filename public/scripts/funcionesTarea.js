@@ -1,6 +1,7 @@
 
 let taskAEliminar = null; 
-  let taskAEditar = null;             
+let taskAEditar = null;
+let taskAFinalizar = null;             
   function mostrarMensaje(conte, texto, tipo = 'success') {
     const contenedor = document.getElementById(`${conte}`);
     contenedor.textContent = texto;
@@ -43,6 +44,47 @@ let taskAEliminar = null;
     });
 
     const modal = bootstrap.Modal.getInstance(document.getElementById('confirmarEliminarModal'));
+    modal.hide();
+  });
+
+  document.getElementById('btnConfirmarFinalizar').addEventListener('click', function () {
+    if (!taskAFinalizar) return;
+
+    const taskIdFinal = taskAFinalizar.dataset.taskId;
+
+    fetch(`${BASE_URL}tareas/finalizar`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: `task_id=${encodeURIComponent(taskIdFinal)}`
+    })
+    
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        mostrarMensaje('mensaje-success', '✅ Tarea Finalizada correctamente.', 'success');
+        taskAFinalizar.closest('.card').remove();
+        setTimeout(() => {
+          window.location.href = `${BASE_URL}`; 
+        }, 500);
+      } else if(data.warning){
+        mostrarMensaje('mensaje-success', data.message, 'warning');
+        taskAFinalizar.closest('.card').remove();
+        setTimeout(() => {
+          window.location.href = `${BASE_URL}`; 
+        }, 500);
+      } 
+      else {
+        mostrarMensaje('mensaje-success', data.message, 'danger');
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      mostrarMensaje('mensaje-success', '❌ Error en la petición.', 'danger');
+    });
+
+    const modal = bootstrap.Modal.getInstance(document.getElementById('confirmarFinalizarModal'));
     modal.hide();
   });
 
@@ -145,6 +187,15 @@ document.getElementById('btnConfirmarArchivar').addEventListener('click', functi
       taskAEliminar = this;
 
       const modal = new bootstrap.Modal(document.getElementById('confirmarEliminarModal'));
+      modal.show();
+    });
+  });
+
+  document.querySelectorAll('.btn-finalizar').forEach(btn => {
+    btn.addEventListener('click', function () {
+      taskAFinalizar = this;
+
+      const modal = new bootstrap.Modal(document.getElementById('confirmarFinalizarModal'));
       modal.show();
     });
   });
