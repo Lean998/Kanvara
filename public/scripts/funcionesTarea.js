@@ -2,50 +2,6 @@
 let taskAEliminar = null; 
 let taskAEditar = null;
 let taskAFinalizar = null;             
-  function mostrarMensaje(conte, texto, tipo = 'success') {
-    const contenedor = document.getElementById(`${conte}`);
-    contenedor.textContent = texto;
-    contenedor.className = `alert alert-${tipo}`;
-    contenedor.classList.remove('d-none');
-
-    setTimeout(() => {
-      contenedor.classList.add('d-none');
-    }, 3500);
-  }
-
-  document.getElementById('btnConfirmarEliminar').addEventListener('click', function () {
-    if (!taskAEliminar) return;
-
-    const taskIdElim = taskAEliminar.dataset.taskId;
-
-    fetch(`${BASE_URL}tareas/eliminar`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: `task_id=${encodeURIComponent(taskIdElim)}`
-    })
-    
-    .then(res => res.json())
-    .then(data => {
-      if (data.success) {
-        mostrarMensaje('mensaje-success', '✅ Tarea eliminada correctamente.', 'success');
-        taskAEliminar.closest('.card').remove();
-        setTimeout(() => {
-          window.location.href = `${BASE_URL}`; 
-        }, 500);
-      } else {
-        mostrarMensaje('mensaje-success', '❌ Error al eliminar la tarea.', 'danger');
-      }
-    })
-    .catch(err => {
-      console.error(err);
-      mostrarMensaje('mensaje-success', '❌ Error en la petición.', 'danger');
-    });
-
-    const modal = bootstrap.Modal.getInstance(document.getElementById('confirmarEliminarModal'));
-    modal.hide();
-  });
 
   document.getElementById('btnConfirmarFinalizar').addEventListener('click', function () {
     if (!taskAFinalizar) return;
