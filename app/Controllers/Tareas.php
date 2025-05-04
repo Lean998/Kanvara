@@ -6,7 +6,6 @@
   use App\Models\InvitationModel;
   use App\Models\UserModel;
   use CodeIgniter\Config\Services;
-  use App\Controllers\session;
 
   class Tareas extends BaseController{
 
@@ -385,6 +384,5 @@
 
       return redirect()->to('')->with('success', 'Tarea creada correctamente.');
     }
-
 }
 ?>
