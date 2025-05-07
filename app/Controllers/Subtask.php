@@ -27,7 +27,7 @@
 
       $responsable = $this->request->getPost('subtaskResponsible');
       if(empty($responsable)){
-        $data['user_id'] = -1;
+        $data['user_id'] = null;
       } else {
         $data['user_id'] = $responsable;
       } 
@@ -78,9 +78,8 @@
       $subtaskModel = new SubTaskModel();
       $subtask = $subtaskModel->obtenerSubtarea($this->request->getGet('subtask'));
       $taskModel = new TaskModel();
-      $collaborationSubtaskModel = new collaborationSubtaskModel();
       $task = $taskModel->obtenerTarea($subtask['task_id']);
-      if($collaborationSubtaskModel->isResponsable($subtask['subtask_id'], session('user_id')) AND session('user_id') != $task['user_id']){
+      if(!$subtaskModel->isResponsable($subtask['subtask_id'], session('user_id')) AND session('user_id') != $task['user_id']){
         return redirect()->back()->withInput()->with('error', 'No tienes permisos para realizar esta acción.');
       }
       $collab = new CollaborationModel();
@@ -114,11 +113,17 @@
           'subtask_priority' => $this->request->getPost('subtaskPriority'),
           'subtask_expiry' => $this->request->getPost('subtaskExpiry'),
           'subtask_comment' => $this->request->getPost('subtaskComment'),
-          'user_id' => $this->request->getPost('subtaskResponsible'),
       ];
 
       $subtaskId = $this->request->getPost('subtask_id');
       
+      $user = $this->request->getPost('subtaskResponsible');
+
+      if($user !== ""){
+        $data['user_id'] = $user;
+      } else{
+        $data['user_id'] = null;
+      }
 
       if ($subtaskModel->update($subtaskId, $data)) {
           $taskId = $this->request->getPost('task_id');
@@ -134,7 +139,12 @@
     public function postEliminarSubtarea(){
       $subtaskToDelete = $this->request->getPost('subtask_id');
       $subtaskModel = new SubTaskModel();
-
+      $taskModel = new TaskModel();
+      $subtask = $subtaskModel->obtenerSubtarea($subtaskToDelete);
+      $task = $taskModel->obtenerTarea($subtask['task_id']);
+      if(/*!$subtaskModel->isResponsable($subtaskToDelete, session('user_id'))AND*/ session('user_id') != $task['user_id']){
+        return redirect()->back()->withInput()->with('error', 'No tienes permisos para realizar esta acción.');
+      }
       $subtarea = $subtaskModel->find($subtaskToDelete);
       if (!$subtarea) {
           return redirect()->back()->with('error', 'La subtarea no fue encontrada.');
@@ -151,10 +161,9 @@
       $subtaskModel = new SubTaskModel();
       $subtask = $subtaskModel->obtenerSubtarea($this->request->getGet('subtask'));
       $taskModel = new TaskModel();
-      $collaborationSubtaskModel = new collaborationSubtaskModel();
       $task = $taskModel->obtenerTarea($subtask['task_id']);
       
-      if(!$collaborationSubtaskModel->isResponsable($subtask['subtask_id'], session('user_id')) AND session('user_id') != $task['user_id']){
+      if(!$subtaskModel->isResponsable($subtask['subtask_id'], session('user_id')) AND session('user_id') != $task['user_id']){
         return redirect()->back()->withInput()->with('error', 'No tienes permisos para realizar esta acción.');
       }
 
@@ -164,7 +173,6 @@
                 // Convertir user_id a string para evitar problemas de tipo
                 $collaboratorId = (string) $collaborator['user_id'];
                 $isInSubtask = in_array($collaboratorId, array_map('strval', $subtaskCollaboratorIds), true);
-                log_message('debug', "Collaborator ID {$collaboratorId} in Subtask: " . ($isInSubtask ? 'Yes' : 'No'));
                 return !$isInSubtask;
             }
         );
