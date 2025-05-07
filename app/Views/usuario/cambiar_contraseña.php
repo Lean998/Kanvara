@@ -16,7 +16,7 @@ if (!session('user_id'))  {
           <label for="user_password" class="form-label">Contraseña Actual</label>
           <div class="input-group">
             <input type="password" name="user_password" class="password-input form-control <?= session('errors.user_password') ? 'is-invalid' : '' ?>" id="user_password" value="<?= old('user_password') ?>">
-            <button class="btn btn-outline-secondary togglePassword" type="button" id="togglePassword">
+            <button class="btn btn-outline-secondary togglePassword" type="button">
               <i class="bi bi-eye"></i>
             </button>
             <div class="invalid-feedback">
@@ -29,7 +29,7 @@ if (!session('user_id'))  {
           <label for="user_new_password" class="form-label">Nueva Contraseña</label>
           <div class="input-group">
             <input type="password" name="new_password" class="password-input form-control <?= session('errors.new_password') ? 'is-invalid' : '' ?>" id="new_password" value="<?= old('new_password') ?>">
-            <button class="btn btn-outline-secondary togglePassword" type="button" id="togglePassword">
+            <button class="btn btn-outline-secondary togglePassword" type="button">
               <i class="bi bi-eye"></i>
             </button>
             <div class="invalid-feedback">
@@ -42,7 +42,7 @@ if (!session('user_id'))  {
           <label for="confirm_password" class="form-label">Confirme la nueva contraseña</label>
           <div class="input-group">
             <input type="password" name="confirm_password" class="password-input form-control <?= session('errors.confirm_password') ? 'is-invalid' : '' ?>" id="confirm_password" value="<?= old('confirm_password') ?>">
-            <button class="btn btn-outline-secondary togglePassword" type="button" id="togglePassword">
+            <button class="btn btn-outline-secondary togglePassword" type="button">
               <i class="bi bi-eye"></i>
             </button>
             <div class="invalid-feedback">
