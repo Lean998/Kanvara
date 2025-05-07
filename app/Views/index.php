@@ -198,28 +198,31 @@
             <!-- Sección de vencimiento y botones -->
             <div class="col-12 col-lg-3 d-flex flex-column align-items-center align-items-lg-end justify-content-between text-center text-lg-end">
                 <div class="d-flex flex-column mb-5">
+                  <span class="text-start mb-2">Estado:<strong> <?= esc($task['task_state']) ?></strong> </span> 
                   <p class="mb-2">🕒 Vence: <strong> <?= esc($task['task_expiry']) ?> </strong></p>
-                  <?php if($task['task_state'] != "Completada" ): ?>
-                  <button class="btn btn-finalizar btn-sm btn-outline-light" data-task-id="<?= $task['task_id'] ?>">Finalizar</button>
-                  <?php endif; ?>
+                    <?php if($task['task_state'] != "Completada" AND $task['user_id'] == session('user_id')): ?>
+                      <button class="btn btn-finalizar btn-sm btn-outline-light" data-task-id="<?= $task['task_id'] ?>">Finalizar</button>
+                    <?php endif; ?>
                 </div>
-                <div class="btn-group flex-wrap mb-2 gap-2" role="group">
+                <?php if($task['user_id'] == session('user_id')): ?> 
+                  <div class="btn-group flex-wrap mb-2 gap-2" role="group">
                     <button class="btn btn-editar btn-sm btn-outline-light" data-task-id="<?= $task['task_id'] ?>">✏️ Editar</button>
-                    <?php if (session('opcion') !== 'tareas/tareas-eliminadas' ): ?>
+                      <?php if (session('opcion') !== 'tareas/tareas-eliminadas' ): ?>
                     <button class="btn btn-eliminar btn-sm btn-outline-light" data-task-id="<?= $task['task_id'] ?>">🗑️ Eliminar</button>
                     <?php endif; ?>
-
+                    
                     <?php if (session('opcion') !== 'tareas/tareas-archivadas'): ?>
                       <button class="btn btn-archivar btn-sm btn-outline-light" data-task-id="<?= $task['task_id'] ?>">📦 Archivar</button>
                     <?php endif; ?>
-                </div>
+                  </div>
+                <?php endif; ?>
             </div>
         </div>
       </div>
     <?php endforeach; ?>
     <?php else: ?>
       <?php $msj = explode('-',session('opcion')) ?>
-      <p class="text-light text-center">No tienes Tareas <?= ($msj[1]) ?></p>
+      <p class="text-light text-center">No tienes Tareas <?php if (!empty($msj[1])){echo($msj[1]);}  ?></>
     <?php endif; ?>
   </div>
 
