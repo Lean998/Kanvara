@@ -55,6 +55,48 @@ document.querySelectorAll('.btn-editar').forEach(btn => {
       .then(res => res.json())
       .then(task => {
         const modal = new bootstrap.Modal(document.getElementById('confirmarEditarModal'));
+        let collaboratorsList = document.createElement('ul');
+        collaboratorsList.className = 'list-group list-group-flush';
+        collaboratorsList.innerHTML = ''; 
+        const collaborators = task.colaboradores || [];
+        if (collaborators.length > 0) {
+          collaborators.forEach(collaborator => {
+  
+            const li = document.createElement('li');
+            li.className = 'list-group-item d-flex justify-content-between align-items-center text-break';
+          
+            const span = document.createElement('span');
+            span.textContent = collaborator.user_name || 'Nombre no disponible';
+          
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'btn btn-sm btn-danger';
+            deleteBtn.textContent = 'Eliminar';
+            deleteBtn.type = 'button'; 
+  
+            
+            
+            deleteBtn.addEventListener('click', () => {
+            const deleteForm = document.getElementById('ColabdeleteForm');
+            const deleteInput = document.getElementById('deleteCollabId');
+            
+            deleteInput.value = collaborator.user_id;
+            deleteForm.action = `${BASE_URL}tareas/eliminar-colaborador`; 
+            
+            const modal = new bootstrap.Modal(document.getElementById('confirmDeleteTaskColabModal'));
+            modal.show();
+            });
+  
+            li.appendChild(span);
+            li.appendChild(deleteBtn);
+            collaboratorsList.appendChild(li);
+          });
+        } else {
+            const li = document.createElement('li');
+            li.className = 'list-group-item text-muted';
+            li.textContent = 'Sin colaboradores';
+            collaboratorsList.appendChild(li);
+        }
+
 
         document.querySelector('#confirmarEditarModal .modal-body').innerHTML = `
           <form id="formEditarTarea" class="container mt-4 p-3 border rounded shadow-sm bg-light">
@@ -67,13 +109,16 @@ document.querySelectorAll('.btn-editar').forEach(btn => {
               <label class="form-label" for="task_expiry_e">Fecha límite</label>
               <input type="datetime-local" id="task_expiry_e" name="task_expiry" class="form-control" value="${task.task_expiry}">
             </div>
+            <div class="mb-3" id="collaborators-container">
+              <label class="form-label">Colaboradores</label>
+            </div>
             <div class="mb-3">
               <label class="form-label" for="task_color_e">Color</label>
               <input type="color" id="task_color_e" name="task_color" class="form-control form-control-color" value="${task.task_color}">
             </div>
           </form>
         `;
-
+        document.getElementById('collaborators-container').appendChild(collaboratorsList);
         modal.show();
       })
       .catch(err => {
