@@ -11,7 +11,6 @@
       'user_id',
       'subtask_id',
       'collaboration_subtask_created_at',
-      'collaboration_subtask_responsable',
       'collaboration_subtask_updated_at',
       'collaboration_subtask_deleted_at',
     ];
@@ -36,12 +35,6 @@
       ->first();
     }
 
-    public function isResponsable($subtaskId, $userId){
-      return $this->where('subtask_id', $subtaskId)
-      ->where('user_id', $userId)
-      ->where('collaboration_subtask_responsable', 1)
-      ->where('collaboration_subtask_deleted_at IS NULL')
-      ->first();
-    }
+    
   }
 ?>
