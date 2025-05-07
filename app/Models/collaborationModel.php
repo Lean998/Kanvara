@@ -16,7 +16,6 @@
     protected $createdField = 'collaboration_created_at';
     protected $updatedField = 'collaboration_updated_at';
     protected $useTimestamps = true;
-    protected $useSoftDeletes = true;
 
     public function getColaboradores($taskId){
       return $this->select('users.user_id, users.user_name')
