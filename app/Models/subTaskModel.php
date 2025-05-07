@@ -65,5 +65,11 @@
       $subtask['comentarios'] = $commentsModel->getComentariosSubtarea($subtask['subtask_id']);
       return $subtask;
     }
+
+    public function isResponsable($subtaskId, $userId){
+      return $this->where('subtask_id', $subtaskId)
+      ->where('user_id', $userId)
+      ->first();
+    }
   }
 ?>
