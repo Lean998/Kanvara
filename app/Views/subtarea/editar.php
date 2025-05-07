@@ -63,10 +63,15 @@
 
         <div class="mb-3">
           <label for="subtaskResponsible" class="form-label">Responsable:</label>
-          <?php if(!empty($colab)): ?>
-            <select name="subtaskResponsible" id="subtaskResponsible" class="form-select <?= session('errors.subtaskResponsible') ? 'is-invalid' : '' ?>" required>
-              <?php foreach($colab as $colaborador): ?>
-                <option value="<?= $colaborador['user_id']?> <?php $subtask['user_id'] != $colaborador['user_id'] ?? 'selected'  ?>"> <?= $colaborador['user_name'] ?></option>
+          <?php if (!empty($colab)): ?>
+            <select name="subtaskResponsible" id="subtaskResponsible" class="form-select <?= session('errors.subtaskResponsible') ? 'is-invalid' : '' ?>">
+              
+              <option value="" <?= empty($subtask['user_id']) ? 'selected' : '' ?>>Sin responsable</option>
+
+              <?php foreach ($colab as $colaborador): ?>
+                <option value="<?= $colaborador['user_id'] ?>" <?= ($subtask['user_id'] ?? '') == $colaborador['user_id'] ? 'selected' : '' ?>>
+                  <?= $colaborador['user_name'] ?>
+                </option>
               <?php endforeach; ?>
             </select>
           <?php endif; ?>
