@@ -20,7 +20,7 @@ if (!session('user_id'))  {
             <?php if ($task['task_reminder'] != null ): ?>
               <p class="mb-2">🕒 Recordatorio: <?= esc($task['task_reminder']) ?></p>
             <?php endif; ?>
-          <?php if($task['task_state'] != "Completada"): ?>
+          <?php if($task['task_state'] != "Completada" AND $task['user_id'] == session('user_id')): ?>
           <button class="mb-2 btn w-100 btn-finalizar btn-sm btn-outline-dark btn-light" data-task-id="<?= $task['task_id'] ?>">Finalizar</button>
           <?php endif; ?>
           <span class="badge bg-<?= $task['task_priority'] === 'Alta' ? 'danger' : ($task['task_priority'] === 'Normal' ? 'warning' : 'success') ?> w-100 text-center mb-2"> Prioridad <?= esc(" ".$task['task_priority']) ?></span>
@@ -64,13 +64,15 @@ if (!session('user_id'))  {
       <div class="w-100 w-lg-25">
         
       </div>
-      <div class="btn-group bg-light rounded flex-wrap gap-2 w-100 w-lg-auto justify-content-center justify-content-lg-end" role="group">
-        <button class="btn btn-editar btn-sm btn-outline-dark" data-task-id="<?= $task['task_id'] ?>">✏️ Editar</button>
-        <button class="btn btn-eliminar btn-sm btn-outline-dark" data-task-id="<?= $task['task_id'] ?>">🗑️ Eliminar</button>
-        <button class="btn btn-archivar btn-sm btn-outline-dark" data-task-id="<?= $task['task_id'] ?>">📦 Archivar</button>
-        <button type="button" class="btn btn-sm btn-outline-dark" data-bs-toggle="modal" data-bs-target="#newtaskCollaborator">Agregar Colaborador</button>
-        <button class="btn btn-newSubtask btn-sm btn-outline-dark" data-bs-toggle="modal" data-bs-target="#newSubtask" data-task-id="<?= $task['task_id'] ?>">➕ Nueva Subtarea</button>
-      </div>
+      <?php if ($task['user_id'] == session('user_id')) : ?>
+        <div class="btn-group bg-light rounded flex-wrap gap-2 w-100 w-lg-auto justify-content-center justify-content-lg-end" role="group">
+          <button class="btn btn-editar btn-sm btn-outline-dark" data-task-id="<?= $task['task_id'] ?>">✏️ Editar</button>
+          <button class="btn btn-eliminar btn-sm btn-outline-dark" data-task-id="<?= $task['task_id'] ?>">🗑️ Eliminar</button>
+          <button class="btn btn-archivar btn-sm btn-outline-dark" data-task-id="<?= $task['task_id'] ?>">📦 Archivar</button>
+          <button type="button" class="btn btn-sm btn-outline-dark" data-bs-toggle="modal" data-bs-target="#newtaskCollaborator">Agregar Colaborador</button>
+          <button class="btn btn-newSubtask btn-sm btn-outline-dark" data-bs-toggle="modal" data-bs-target="#newSubtask" data-task-id="<?= $task['task_id'] ?>">➕ Nueva Subtarea</button>
+        </div>
+      <?php endif; ?>
     </div>
 
   </article>
