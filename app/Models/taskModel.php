@@ -139,7 +139,6 @@
         $tasks = $this->select('tasks.*')
         ->join('collaborations', 'collaborations.task_id = tasks.task_id', 'left')
         ->where('collaborations.user_id', $userId)
-        ->where('tasks.task_archived', 0)
         ->where('tasks.task_deleted_at IS NULL')
         ->orderBy("FIELD(task_priority, 'Alta', 'Normal', 'Baja')")
         ->findAll();
@@ -147,7 +146,6 @@
         $tasks = $this->select('tasks.*')
         ->join('collaborations', 'collaborations.task_id = tasks.task_id', 'left')
         ->where('collaborations.user_id', $userId)
-        ->where('tasks.task_archived', 0)
         ->where('tasks.task_deleted_at IS NULL')
         ->orderBy($ordenar, $orden)
         ->findAll();
@@ -157,7 +155,6 @@
         ->join('collaborations', 'collaborations.task_id = tasks.task_id', 'left')
         ->where('collaborations.user_id', $userId)
         ->where('tasks.task_deleted_at IS NULL')
-        ->where('tasks.task_archived', 0)
         ->findAll();
       } 
       $subTaskModel = new SubTaskModel();
