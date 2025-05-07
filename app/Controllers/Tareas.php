@@ -127,6 +127,15 @@
       ]);
     }
 
+    public function postEliminarColaborador(){
+      $collaborationModel = new CollaborationModel();
+      $colaborador = $this->request->getPost('id');
+      if(!$collaborationModel->where('user_id', $colaborador)->delete()){
+        return redirect()->back()->with('error', 'Ocurrio un errro al eliminar al colaborador.');
+      }
+      return redirect()->back()->with('success', 'Colaborador eliminado correctamente.');
+    }
+
     public function postEliminar(){
 
       $taskId = $this->request->getPost('task_id');
