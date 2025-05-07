@@ -13,7 +13,7 @@
       $taskModel = new TaskModel();
       $task = $taskModel->obtenerTarea($taskId);
       if(!$task || $task == null){
-        return $this->response->setJSON(['success' => false, 'message' => 'Tarea no encontrada']);
+        return view('errors/html/error_404', ['message' => 'Ocurrio un error al mostrar la tarea o la tarea no existe.']);
       }
 
       $collab = new CollaborationModel();
@@ -25,13 +25,12 @@
 
       return view('tarea/task', $data);
     }
-
     public function getTarea($taskId){
       $taskModel = new TaskModel();
       $task = $taskModel->obtenerTarea($taskId);
 
       if(!$task || $task == null){
-        return $this->response->setJSON(['success' => false, 'message' => 'Ocurrio un error al obtener sus tareas.']);
+        return view('errors/html/error_404', ['message' => 'Ocurrio un error al mostrar la tarea o la tarea no existe.']);
       }
 
       return $this->response->setJSON($task); 
