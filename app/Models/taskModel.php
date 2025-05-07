@@ -53,7 +53,7 @@
         }
         unset($subtask);
       }
-      $task['colaboradores'] = $collaborationModel -> where ('task_id', $tareaId) -> findAll();
+      $task['colaboradores'] = $collaborationModel->getColaboradores($task['task_id']);
       return $task;
     }
     public function obtenerTareas($userId, $ordenar = "", $orden = "ASC"){
