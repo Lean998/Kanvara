@@ -11,6 +11,7 @@
 <div class="container">
   <form action="<?= base_url()?>subtask/editar-subtarea"  method="post" id="subtaskEditForm" class="container mt-4 p-3 border rounded shadow-sm bg-light">
     <?= csrf_field() ?>
+    <?php if($subtask['user_id'] !== session('user_id')) : ?>
       <div class="mb-3">
         <label for="subtaskDesc" class="form-label">Descripcion:</label>
         <input type="text" name="subtaskDesc" id="subtaskDesc" class="form-control <?= session('errors.subtaskDesc') ? 'is-invalid' : '' ?>" value="<?= $subtask['subtask_desc'] ?>" required><br>
@@ -86,7 +87,21 @@
         <div class="text-end">
           <button type="submit" class="btn btn-primary" form="subtaskEditForm">Editar Subtarea</button>
         </div>
-
+        <?php else:?>
+        <div class="row mb-3">
+          <div class="col-12">
+            <label for="subtaskState" class="form-label <?= session('errors.subtaskState') ? 'is-invalid' : '' ?>">Estado:</label>
+            <select name="subtaskState" id="subtaskState" class="form-select">
+              <option value="En proceso" <?= $subtask['subtask_state'] === 'En proceso' ? 'selected' : '' ?>>En proceso</option>
+              <option value="Completada" <?= $subtask['subtask_state'] === 'Completada' ? 'selected' : '' ?>>Completada</option>
+            </select>
+            <div class="invalid-feedback">
+              <?= session('errors.subtaskState') ?? '' ?>
+            </div>
+          </div>
+            
+        </div>
+        <?php endif;?>        
         <?php if (session('error')): ?>
           <div class="alert alert-danger"><?= session('error') ?></div>
         <?php endif; ?>
