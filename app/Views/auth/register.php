@@ -26,9 +26,9 @@
 
               <div class="mb-3">
                 <label for="userName" class="form-label">Usuario:</label>
-                <input type="text" name="username" id="userName" class="form-control <?= session('errors.username') ? 'is-invalid' : '' ?>" value="<?= old('username') ?>" required>
+                <input type="text" name="usuario" id="userName" class="form-control <?= session('errors.usuario') ? 'is-invalid' : '' ?>" value="<?= old('usuario') ?>" required>
                 <div class="invalid-feedback">
-                  <?= session('errors.username') ?? '' ?>
+                  <?= session('errors.usuario') ?? '' ?>
                 </div>
               </div>
 
@@ -42,17 +42,17 @@
 
               <div class="mb-3">
                 <label for="userPass" class="form-label">Contraseña:</label>
-                <input type="password" name="password" id="userPass" class="form-control <?= session('errors.password') ? 'is-invalid' : '' ?>" required>
+                <input type="password" name="contraseña" id="userPass" class="form-control <?= session('errors.contraseña') ? 'is-invalid' : '' ?>" required>
                 <div class="invalid-feedback">
-                  <?= session('errors.password') ?? '' ?>
+                  <?= session('errors.contraseña') ?? '' ?>
                 </div>
               </div>
 
               <div class="mb-3">
                 <label for="confirmPass" class="form-label">Confirme su Contraseña:</label>
-                <input type="password" name="confirm_password" id="confirmPass" class="form-control <?= session('errors.confirm_password') ? 'is-invalid' : '' ?>" required>
+                <input type="password" name="confirmar_contraseña" id="confirmPass" class="form-control <?= session('errors.confirmar_contraseña') ? 'is-invalid' : '' ?>" required>
                 <div class="invalid-feedback">
-                  <?= session('errors.confirm_password') ?? '' ?>
+                  <?= session('errors.confirmar_contraseña') ?? '' ?>
                 </div>
               </div>
 
