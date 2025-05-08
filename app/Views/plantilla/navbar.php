@@ -1,15 +1,19 @@
 <!-- Navbar -->
 <link rel="stylesheet" href="<?php base_url('public/css/navbar.css') ?> ">
 
+<header>
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container-fluid position-relative">
+            <button class="navbar-toggler position-absolute start-1" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-<nav class="navbar navbar-dark bg-dark">
-    <div class="container-fluid">
-        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        
-    </div>
-</nav>
+            <h1 class="text-light m-0 text-center w-100">
+                <a href="<?= base_url() ?>" class="text-white text-decoration-none">Kanvara</a>
+            </h1>
+        </div>
+    </nav>
+</header>
 
 <!-- Offcanvas para el menú hamburguesa -->
 <div class="offcanvas offcanvas-start bg-dark text-light" tabindex="-1" id="sidebarMenu" aria-labelledby="sidebarMenuLabel">
