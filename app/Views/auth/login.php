@@ -17,9 +17,7 @@
               <p class="text-success text-center"><?= session('success') ?></p>
             <?php endif; ?>
 
-            <?php if (session('error')): ?>
-              <p class="text-danger text-center"><?= session('error') ?></p>
-            <?php endif; ?>
+            
 
             <form action='user-authenticate' method="post">
               <?= csrf_field() ?>
@@ -39,6 +37,10 @@
                   <?= session('errors.password') ?? '' ?>
                 </div>
               </div>
+
+              <?php if (session('error')): ?>
+              <p class="text-danger text-start"><?= session('error') ?></p>
+              <?php endif; ?>
 
               <div class="d-grid mb-2">
                 <input type="submit" value="Iniciar Sesión" class="btn btn-primary">
