@@ -11,10 +11,10 @@
     public function postUserUp(){
       $validation = service('validation');
       $validation->setRules([
-        'username' => 'required|min_length[3]|max_length[50]|is_unique[users.user_name]',
+        'usuario' => 'required|min_length[3]|max_length[50]|is_unique[users.user_name]',
         'email' => 'required|valid_email|is_unique[users.user_email]',
-        'password' => 'required|min_length[6]',
-        'confirm_password' => 'required|matches[password]'
+        'contraseña' => 'required|min_length[6]',
+        'confirmar_contraseña' => 'required|matches[contraseña]'
       ]); 
 
       if(!$validation->withRequest($this->request)->run()){
@@ -23,9 +23,9 @@
 
       $userModel = new UserModel();
       $data = [
-        'user_name' => $this->request->getPost('username'),
+        'user_name' => $this->request->getPost('usuario'),
         'user_email' => $this->request->getPost('email'),
-        'user_password' => password_hash($this->request->getPost('password'), PASSWORD_DEFAULT)
+        'user_password' => password_hash($this->request->getPost('contraseña'), PASSWORD_DEFAULT)
       ];
       $userModel->save($data);
       return redirect()->to('/auth/login')->with('success', 'Registro exitoso');
