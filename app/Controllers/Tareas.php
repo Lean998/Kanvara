@@ -18,7 +18,7 @@
 
       $sesion = session();
       if (!$sesion->get("user_id")) {
-          return redirect()->to(base_url('auth/login'))->with('success', 'Colaborador eliminado correctamente.');
+          return redirect()->to(base_url('auth/login'));
       }
 
       $collab = new CollaborationModel();
