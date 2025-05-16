@@ -114,18 +114,27 @@
       return $this->response->setJSON(['success' => $actualizado, 'message' => $actualizado ? 'Tarea archivada con éxito' : 'No se pudo archivar']);
     }
     public function postEditar(){
+      
+
       $id = $this->request->getPost('task_id');
-      $titulo = $this->request->getPost('task_title');
+      $titulo = $this->request->getPost('task_title_e');
       $fecha = $this->request->getPost('task_expiry');
       $color = $this->request->getPost('task_color');
 
       $taskModel = new TaskModel();
-      $actualizado = $taskModel->update($id, [
+      $data = [
           'task_title' => $titulo,
           'task_expiry' => $fecha,
           'task_color' => $color
-      ]);
-  
+      ];
+      log_message('debug', "Editar -> id: $id, título: $titulo, fecha: $fecha, color: $color");
+      if(!$actualizado = $taskModel->update($id, $data)){
+          return $this->response->setJSON([
+            'error' => true,
+            'message' => 'Ocurrio un error al actualizar la tarea.'
+        ]);
+      }
+      
       return $this->response->setJSON([
           'success' => $actualizado,
           'message' => $actualizado ? 'Tarea actualizada con éxito refresque para ver los cambios.' : 'No se pudo actualizar'
@@ -146,13 +155,16 @@
       $taskId = $this->request->getPost('task_id');
 
       if (!$taskId || !is_numeric($taskId)) {
-        return $this->response->setJSON(['success' => false, 'message' => 'Error al encontrar la tarea.']);
+        return redirect()->back()->withInput()->with('error', 'Ocurrio un error al encontrar la tarea.');
       }
 
       $taskModel = new TaskModel();
 
-      $deleted = $taskModel->delete($taskId);
-      return $this->response->setJSON(['success' => $deleted]);
+      if (!$deleted = $taskModel->delete($taskId)){
+        return redirect()->back()->withInput()->with('error', 'Ocurrio un error al eliminar la tarea.');
+      } 
+      return redirect()->to(base_url())->withInput()->with('success', 'Tarea eliminada con exito.');
+      
     }
 
     public function postFinalizar(){
@@ -361,7 +373,7 @@
     $validation = service('validation');
       $rules = [
         'taskTitle' => 'required|min_length[5]',
-        'taskDesc' => 'required|min_length[10]|max_length[70]',
+        'taskDesc' => 'required|min_length[10]',
         'taskPriority' => 'required|in_list[Baja,Normal,Alta]',
         'taskState' => 'required|in_list[Definida,En proceso,Completada]',
         'taskExpiry' => 'required|valid_date|future_date',
@@ -372,7 +384,7 @@
       $validation->setRules($rules);
       
       if(!$validation->withRequest($this->request)->run()){
-        return redirect()->back()->withInput()->with('errors', $validation->getErrors());
+        return redirect()->back()->withInput()->with('errors', $validation->getErrors())->with('error', 'Ocurrio un error, revise los datos ingresados.');
       }
       
       $data = [
@@ -393,7 +405,10 @@
       }
 
       $taskModel = new TaskModel();
-      $taskModel->save($data);
+      if(!$taskModel->save($data)){
+      return redirect()->to('')->with('error', 'Ocurrio un error al crear la tarea.');
+      }
+      
 
       return redirect()->to('')->with('success', 'Tarea creada correctamente.');
     }
