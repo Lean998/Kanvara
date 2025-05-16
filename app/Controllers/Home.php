@@ -28,7 +28,7 @@ class Home extends BaseController {
     ];
     $sesion = session();
     if (!$sesion->get("user_id")) {
-      return view("auth/login");
+      return redirect()->to(base_url('auth/login'));
     }
     session()->set('opcion', '');
     return view('index', $data);
