@@ -22,15 +22,15 @@ $sesion = session();
           <?= csrf_field() ?>
 
           <label for="taskTitle">Titulo:</label>
-          <input type="text" name="taskDesc" id="taskTitle" class="form-control <?= session('errors.taskTitle') ? 'is-invalid' : '' ?>" value="<?= old('taskTitle') ?>" required><br>
+          <input type="text" name="taskTitle" id="taskTitle" class="form-control <?= session('errors.taskTitle') ? 'is-invalid' : '' ?>" value="<?= old('taskTitle') ?>" required><br>
           <div class="invalid-feedback">
-            <?= session('errors.taskTitle') ?? '' ?>
+            <?= str_replace("taskTitle","titulo",session('errors.taskTitle')) ?? '' ?>
           </div>
 
           <label for="taskDesc">Descripcion:</label>
-          <input type="text" name="taskDesc" id="taskTitle" class="form-control <?= session('errors.taskDesc') ? 'is-invalid' : '' ?>" value="<?= old('taskDesc') ?>" required><br>
+          <input type="text" name="taskDesc" id="taskDesc" class="form-control <?= session('errors.taskDesc') ? 'is-invalid' : '' ?>" value="<?= old('taskDesc') ?>" required><br>
           <div class="invalid-feedback">
-            <?= session('errors.taskDesc') ?? '' ?>
+            <?= str_replace("taskDesc","descripcion",session('errors.taskDesc')) ?? '' ?>
           </div>
           
           <label for="taskPriority">Prioridad:</label>
@@ -40,13 +40,13 @@ $sesion = session();
             <option value="alta">Alta</option>
           </select>
           <div class="invalid-feedback">
-            <?= session('errors.taskPriority') ?? '' ?>
+            <?= str_replace("taskPriority","prioridad",session('errors.taskPriority')) ?? '' ?>
           </div>
           
           <label for="taskExpiry">Fecha limite:</label>
           <input type="datetime" min="<?= date('Y-m-d') ?>" name="taskExpiry" id="taskExpiry" class="form-control <?= session('errors.taskExpiry') ? 'is-invalid' : '' ?>" value="<?= old('taskExpiry') ?>" required><br>
           <div class="invalid-feedback">
-            <?= session('errors.taskExpiry') ?? '' ?>
+            <?= str_replace("taskExpiry","fecha limite",session('errors.taskExpiry')) ?? '' ?>
           </div>
 
           <div class="row justify-content-center">
@@ -61,7 +61,7 @@ $sesion = session();
               <label for="taskReminderDate">Fecha del recordatorio:</label>
               <input type="datetime" min="<?= date('Y-m-d') ?>" name="taskReminderDate" id="taskReminderDate" class="form-control <?= session('errors.taskReminderDate') ? 'is-invalid' : '' ?>" value="<?= old('taskReminderDate') ?>" required><br>
               <div class="invalid-feedback">
-                <?= session('errors.taskReminderDate') ?? '' ?>
+                <?= str_replace("taskReminderDate","recordatorio",session('errors.taskReminderDate')) ?? '' ?>
               </div>
             </div>
           </div>
@@ -69,7 +69,7 @@ $sesion = session();
           <label for="taskColor">Color de la Tarea:</label>
           <input type="color" name="taskColor" id="taskColor" class="form-control <?= session('errors.taskColor') ? 'is-invalid' : '' ?>" value="<?= old('taskColor') ?>" required><br>
           <div class="invalid-feedback">
-            <?= session('errors.taskColor') ?? '' ?>
+            <?= str_replace("taskColor","color",session('errors.taskColor')) ?? '' ?>
           </div>
 
           <?php if (session('error')): ?>
