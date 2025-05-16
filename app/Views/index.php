@@ -149,7 +149,7 @@
     <?php if (!empty($tasks)): ?>
     <?php  
       $prontoVence = []; 
-      $hoy = date('Y-m-d', strtotime('+1 day'));
+      $hoy = date('Y-m-d');
     ?>
     <?php foreach ($tasks as $task): ?>
       <?php 
