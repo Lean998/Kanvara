@@ -13,8 +13,8 @@
           <div class="card-body">
             <h2 class="card-title text-center mb-4">Login de Usuarios</h2>
             
-            <?php if (session('success')): ?>
-              <p class="text-success text-center"><?= session('success') ?></p>
+            <?php if ($msg = session()->getFlashdata('success')): ?>
+              <p class="text-success text-center"><?= ($msg) ?></p>
             <?php endif; ?>
 
             
