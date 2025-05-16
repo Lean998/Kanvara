@@ -62,7 +62,7 @@
         'user_email' => $user['user_email'],
         'isLoggedIn' => true,
       ]);
-
+      session()->remove(['errors', 'error', 'success']);
       return redirect()->to('');
       
     }
