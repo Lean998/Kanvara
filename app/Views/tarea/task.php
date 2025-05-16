@@ -365,8 +365,8 @@
   <?php endif ?>
 </script>
 <script>
-  <?php if (session('error')): ?>
-    mostrarMensaje('mensaje-success', <?= json_encode(session('error')) ?>, 'danger');
+  <?php if ($msg = session()->getFlashdata('error')): ?>
+    mostrarMensaje('mensaje-success', <?= json_encode($msg) ?>, 'danger');
   <?php endif ?>
 </script>
 
