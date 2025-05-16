@@ -80,19 +80,23 @@
 
 <div class="modal fade" id="confirmarEliminarModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">¿Eliminar tarea?</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+    <form method="POST" action="<?= base_url('tareas/eliminar') ?>" id="formEliminarTarea">
+      <?= csrf_field() ?> 
+      <input type="hidden" name="task_id" id="taskIdAEliminar">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">¿Eliminar tarea?</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          Esta acción no se puede deshacer. ¿Estás seguro que deseas eliminar esta tarea?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-danger">Eliminar</button>
+        </div>
       </div>
-      <div class="modal-body">
-        Esta acción no se puede deshacer. ¿Estás seguro que deseas eliminar esta tarea?
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-        <button id="btnConfirmarEliminar" type="button" class="btn btn-danger">Eliminar</button>
-      </div>
-    </div>
+    </form>
   </div>
 </div>
 
@@ -147,7 +151,7 @@
             <label for="subtaskDesc" class="form-label">Descripción:</label>
             <input type="text" name="subtaskDesc" id="subtaskDesc" class="form-control <?= session('errors.subtaskDesc') ? 'is-invalid' : '' ?>" value="<?= old('subtaskDesc') ?>" required>
             <div class="invalid-feedback">
-              <?= session('errors.subtaskDesc') ?? '' ?>
+              <?= str_replace("subtaskDesc","descripcion",session('errors.subtaskDesc')) ?? '' ?>
             </div>
           </div>
           
@@ -161,7 +165,7 @@
                 <option value="Completada" <?= old('subtaskState') === 'Completada' ? 'selected' : '' ?>>Completada</option>
               </select>
               <div class="invalid-feedback">
-                <?= session('errors.subtaskState') ?? '' ?>
+                <?= str_replace("subtaskState","estado",session('errors.subtaskState')) ?? '' ?>
               </div>
             </div>
             
@@ -173,7 +177,7 @@
                 <option value="Alta" <?= old('subtaskPriority') === 'alta' ? 'selected' : '' ?>>Alta</option>
               </select>
               <div class="invalid-feedback">
-                <?= session('errors.subtaskPriority') ?? '' ?>
+                <?= str_replace("subtaskPriority","prioridad",session('errors.subtaskPriority')) ?? '' ?>
               </div>
             </div>
           </div>
@@ -182,7 +186,7 @@
             <label for="subtaskExpiry" class="form-label">Fecha límite:</label>
             <input type="datetime-local" min="<?= date('Y-m-d') ?>" name="subtaskExpiry" id="subtaskExpiry" class="form-control <?= session('errors.subtaskExpiry') ? 'is-invalid' : '' ?>" value="<?= old('subtaskExpiry') ?>">
             <div class="invalid-feedback">
-              <?= session('errors.subtaskExpiry') ?? '' ?>
+              <?= str_replace("subtaskExpiry","fecha limite",session('errors.subtaskExpiry')) ?? '' ?>
             </div>
           </div>
 
@@ -190,7 +194,7 @@
             <label for="subtaskComment" class="form-label">Comentario:</label>
             <input type="text" name="subtaskComment" id="subtaskComment" class="form-control <?= session('errors.subtaskComment') ? 'is-invalid' : '' ?>" value="<?= old('subtaskComment') ?>" required>
             <div class="invalid-feedback">
-              <?= session('errors.subtaskComment') ?? '' ?>
+              <?= str_replace("subtaskComment","comentario",session('errors.subtaskComment')) ?? '' ?>
             </div>
           </div>
 
@@ -357,6 +361,7 @@
     </div>
 </div>
 
+<script src="<?= base_url('public/scripts/globales.js') ?>"></script> 
 <script src="<?= base_url('public/scripts/funcionesTarea.js') ?>"></script>
 <script src="<?= base_url('public/scripts/funcionesSubtarea.js') ?>"></script>
 <script>
