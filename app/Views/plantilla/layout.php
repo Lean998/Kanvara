@@ -1,3 +1,9 @@
+<?php 
+    $sesion = session();
+    if (!$sesion->get("user_id")) {
+        return view("auth/login");
+    }
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
