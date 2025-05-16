@@ -40,10 +40,10 @@
         const BASE_URL = '<?= base_url() ?>';
     </script>
     <script>
-        <?php if (session('success')): ?>
-            mostrarMensaje('mensaje-success', <?= json_encode(session('success')) ?>, 'success');
-        <?php elseif(session('error')): ?>
-            mostrarMensaje('mensaje-success', <?= json_encode(session('error')) ?>, 'danger');
+        <?php if ($msg = session()->getFlashdata('success')): ?>
+            mostrarMensaje('mensaje-success', <?= json_encode($msg) ?>, 'success');
+        <?php elseif($msg = session()->getFlashdata('error')): ?>
+            mostrarMensaje('mensaje-success', <?= json_encode($msg) ?>, 'danger');
         <?php endif ?>
     </script>
 </body>
