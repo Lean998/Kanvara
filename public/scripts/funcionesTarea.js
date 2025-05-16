@@ -46,112 +46,113 @@ let taskAFinalizar = null;
 
   let tareaEditar = null;
 
-document.querySelectorAll('.btn-editar').forEach(btn => {
-  btn.addEventListener('click', function () {
-    const taskId = this.dataset.taskId;
-    tareaEditar = this.closest('.card');
+  document.querySelectorAll('.btn-editar').forEach(btn => {
+    btn.addEventListener('click', function () {
+      const taskId = this.dataset.taskId;
+      tareaEditar = this.closest('.card');
 
-    fetch(`${BASE_URL}tareas/tarea/${taskId}`)
-      .then(res => res.json())
-      .then(task => {
-        const modal = new bootstrap.Modal(document.getElementById('confirmarEditarModal'));
-        let collaboratorsList = document.createElement('ul');
-        collaboratorsList.className = 'list-group list-group-flush';
-        collaboratorsList.innerHTML = ''; 
-        const collaborators = task.colaboradores || [];
-        if (collaborators.length > 0) {
-          collaborators.forEach(collaborator => {
-  
-            const li = document.createElement('li');
-            li.className = 'list-group-item d-flex justify-content-between align-items-center text-break';
-          
-            const span = document.createElement('span');
-            span.textContent = collaborator.user_name || 'Nombre no disponible';
-          
-            const deleteBtn = document.createElement('button');
-            deleteBtn.className = 'btn btn-sm btn-danger';
-            deleteBtn.textContent = 'Eliminar';
-            deleteBtn.type = 'button'; 
-  
+      fetch(`${BASE_URL}tareas/tarea/${taskId}`)
+        .then(res => res.json())
+        .then(task => {
+          const modal = new bootstrap.Modal(document.getElementById('confirmarEditarModal'));
+          let collaboratorsList = document.createElement('ul');
+          collaboratorsList.className = 'list-group list-group-flush';
+          collaboratorsList.innerHTML = ''; 
+          const collaborators = task.colaboradores || [];
+          if (collaborators.length > 0) {
+            collaborators.forEach(collaborator => {
+    
+              const li = document.createElement('li');
+              li.className = 'list-group-item d-flex justify-content-between align-items-center text-break';
             
+              const span = document.createElement('span');
+              span.textContent = collaborator.user_name || 'Nombre no disponible';
             
-            deleteBtn.addEventListener('click', () => {
-            const deleteForm = document.getElementById('ColabdeleteForm');
-            const deleteInput = document.getElementById('deleteCollabId');
-            
-            deleteInput.value = collaborator.user_id;
-            deleteForm.action = `${BASE_URL}tareas/eliminar-colaborador`; 
-            
-            const modal = new bootstrap.Modal(document.getElementById('confirmDeleteTaskColabModal'));
-            modal.show();
+              const deleteBtn = document.createElement('button');
+              deleteBtn.className = 'btn btn-sm btn-danger';
+              deleteBtn.textContent = 'Eliminar';
+              deleteBtn.type = 'button'; 
+    
+              
+              
+              deleteBtn.addEventListener('click', () => {
+              const deleteForm = document.getElementById('ColabdeleteForm');
+              const deleteInput = document.getElementById('deleteCollabId');
+              
+              deleteInput.value = collaborator.user_id;
+              deleteForm.action = `${BASE_URL}tareas/eliminar-colaborador`; 
+              
+              const modal = new bootstrap.Modal(document.getElementById('confirmDeleteTaskColabModal'));
+              modal.show();
+              });
+    
+              li.appendChild(span);
+              li.appendChild(deleteBtn);
+              collaboratorsList.appendChild(li);
             });
-  
-            li.appendChild(span);
-            li.appendChild(deleteBtn);
-            collaboratorsList.appendChild(li);
-          });
+          } else {
+              const li = document.createElement('li');
+              li.className = 'list-group-item text-muted';
+              li.textContent = 'Sin colaboradores';
+              collaboratorsList.appendChild(li);
+          }
+
+
+          document.querySelector('#confirmarEditarModal .modal-body').innerHTML = `
+            <form id="formEditarTarea" class="container mt-4 p-3 border rounded shadow-sm bg-light">
+              <input type="hidden" name="task_id" value="${task.task_id}">
+              <div class="mb-3">
+                <label class="form-label" for="task_title_e">Título</label>
+                <input type="text" id="task_title_e" name="task_title_e" class="form-control" value="${task.task_title}">
+              </div>
+              <div class="mb-3">
+                <label class="form-label" for="task_expiry_e">Fecha límite</label>
+                <input type="datetime-local" id="task_expiry_e" name="task_expiry" class="form-control" value="${task.task_expiry}">
+              </div>
+              <div class="mb-3" id="collaborators-container">
+                <label class="form-label">Colaboradores</label>
+              </div>
+              <div class="mb-3">
+                <label class="form-label" for="task_color_e">Color</label>
+                <input type="color" id="task_color_e" name="task_color" class="form-control form-control-color" value="${task.task_color}">
+              </div>
+            </form>
+          `;
+          document.getElementById('collaborators-container').appendChild(collaboratorsList);
+          modal.show();
+        })
+        .catch(err => {
+          console.error(err);
+          mostrarMensaje('mensaje-success', '❌ Error al obtener los datos de la tarea.', 'danger');
+        });
+    });
+  });
+
+  document.getElementById('btnConfirmarEditar').addEventListener('click', function () {
+    const form = document.getElementById('formEditarTarea');
+    if (!form) return;
+
+    const formData = new FormData(form);
+
+    fetch(`${BASE_URL}tareas/editar`, {
+      method: 'POST',
+      body:formData,
+      headers: { 'X-Requested-With': 'XMLHttpRequest'}
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          mostrarMensaje('mensaje-success', '✅ Tarea actualizada correctamente, refresque para ver los cambios.', 'success');
+          bootstrap.Modal.getInstance(document.getElementById('confirmarEditarModal')).hide();
         } else {
-            const li = document.createElement('li');
-            li.className = 'list-group-item text-muted';
-            li.textContent = 'Sin colaboradores';
-            collaboratorsList.appendChild(li);
+          mostrarMensaje('mensaje-success', data.message || '❌ Error al actualizar la tarea.', 'danger');
         }
-
-
-        document.querySelector('#confirmarEditarModal .modal-body').innerHTML = `
-          <form id="formEditarTarea" class="container mt-4 p-3 border rounded shadow-sm bg-light">
-            <input type="hidden" name="task_id" value="${task.task_id}">
-            <div class="mb-3">
-              <label class="form-label" for="task_title_e">Título</label>
-              <input type="text" id="task_title_e" name="task_title" class="form-control" value="${task.task_title}">
-            </div>
-            <div class="mb-3">
-              <label class="form-label" for="task_expiry_e">Fecha límite</label>
-              <input type="datetime-local" id="task_expiry_e" name="task_expiry" class="form-control" value="${task.task_expiry}">
-            </div>
-            <div class="mb-3" id="collaborators-container">
-              <label class="form-label">Colaboradores</label>
-            </div>
-            <div class="mb-3">
-              <label class="form-label" for="task_color_e">Color</label>
-              <input type="color" id="task_color_e" name="task_color" class="form-control form-control-color" value="${task.task_color}">
-            </div>
-          </form>
-        `;
-        document.getElementById('collaborators-container').appendChild(collaboratorsList);
-        modal.show();
       })
       .catch(err => {
         console.error(err);
-        mostrarMensaje('mensaje-success', '❌ Error al obtener los datos de la tarea.', 'danger');
+        mostrarMensaje('mensaje-success', '❌ Error en la petición.', 'danger');
       });
   });
-});
-
-document.getElementById('btnConfirmarEditar').addEventListener('click', function () {
-  const form = document.getElementById('formEditarTarea');
-  if (!form) return;
-
-  const formData = new FormData(form);
-
-  fetch(`${BASE_URL}tareas/editar`, {
-    method: 'POST',
-    body: new URLSearchParams(formData)
-  })
-    .then(res => res.json())
-    .then(data => {
-      if (data.success) {
-        mostrarMensaje('mensaje-success', '✅ Tarea actualizada correctamente, refresque para ver los cambios.', 'success');
-        bootstrap.Modal.getInstance(document.getElementById('confirmarEditarModal')).hide();
-      } else {
-        mostrarMensaje('mensaje-success', data.message || '❌ Error al actualizar la tarea.', 'danger');
-      }
-    })
-    .catch(err => {
-      console.error(err);
-      mostrarMensaje('mensaje-success', '❌ Error en la petición.', 'danger');
-    });
-});
 
 let tareaArchivar = null;
 document.getElementById('btnConfirmarArchivar').addEventListener('click', function () {
@@ -182,15 +183,16 @@ document.getElementById('btnConfirmarArchivar').addEventListener('click', functi
     const modal = bootstrap.Modal.getInstance(document.getElementById('confirmarArchivarModal'));
     modal.hide();
   });
+  
+document.querySelectorAll('.btn-eliminar').forEach(btn => {
+  btn.addEventListener('click', function () {
+    const taskId = this.getAttribute('data-task-id');
+    document.getElementById('taskIdAEliminar').value = taskId;
 
-  document.querySelectorAll('.btn-eliminar').forEach(btn => {
-    btn.addEventListener('click', function () {
-      taskAEliminar = this;
-
-      const modal = new bootstrap.Modal(document.getElementById('confirmarEliminarModal'));
-      modal.show();
-    });
+    const modal = new bootstrap.Modal(document.getElementById('confirmarEliminarModal'));
+    modal.show();
   });
+});
 
   document.querySelectorAll('.btn-finalizar').forEach(btn => {
     btn.addEventListener('click', function () {
