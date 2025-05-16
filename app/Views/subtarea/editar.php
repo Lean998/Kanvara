@@ -102,8 +102,8 @@
             
         </div>
         <?php endif;?>        
-        <?php if (session('error')): ?>
-          <div class="alert alert-danger"><?= session('error') ?></div>
+        <?php if ($msg = session()->getFlashdata('error')): ?>
+          <div class="alert alert-danger"><?= $msg ?></div>
         <?php endif; ?>
   </form>
 </div>
