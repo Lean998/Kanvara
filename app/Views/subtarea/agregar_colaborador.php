@@ -38,8 +38,8 @@ if (!session('user_id')) {
             <button type="submit" class="btn btn-primary" form="subtaskEditForm">Agregar Colaborador</button>
         </div>
 
-        <?php if (session('error')): ?>
-            <div class="alert alert-danger"><?= session('error') ?></div>
+        <?php if ($msg = session()->getFlashdata('error')): ?>
+            <div class="alert alert-danger"><?= $msg ?></div>
         <?php endif; ?>
     </form>
 </div>
