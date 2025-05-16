@@ -3,6 +3,7 @@
   use App\Models\CollaborationModel;
   use App\Models\collaborationSubtaskModel;
   use App\Models\SubTaskModel;
+  use App\Models\CommentsModel;
   use App\Models\TaskModel;
   use App\Models\UserModel;
   use CodeIgniter\Controller;
@@ -37,13 +38,26 @@
         'subtask_priority' => $this->request->getPost('subtaskPriority'),
         'subtask_state'=> $this->request->getPost('subtaskState'),
         'subtask_expiry' => $this->request->getPost('subtaskExpiry'),
-        'subtask_comment' => $this->request->getPost('subtaskComment'),
         'task_id' => $taskId,
       ];
       
       $subtaskModel = new SubTaskModel();
-      $subtaskModel->save($data);
+      $newSubtaskId = 0;
+      if(!$subtaskModel->save($data)){
+        return redirect()->to(base_url() . 'tareas/ver/'.$taskId)->with('error', 'Ocurrio un error al crear la subtarea.');
+      } else{
+        $newSubtaskId = $subtaskModel->insertID() ;
+      }
       
+      $commentsModel = new CommentsModel();
+      
+      $dataComments = [
+        'comments_comment' => $this->request->getPost('subtaskComment') ,
+        'user_id' => session('user_id'),
+        'subtask_id' =>  $newSubtaskId,
+      ];
+
+      $commentsModel->save($dataComments);
       return redirect()->to(base_url() . 'tareas/ver/'.$taskId)->with('success', 'Subtarea creada correctamente.');
     }
     public function postEliminarColaborador(){
