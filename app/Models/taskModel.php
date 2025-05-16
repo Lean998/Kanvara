@@ -13,7 +13,7 @@
 
     protected $validationRules = [
       'task_title'          => 'required|min_length[5]',
-      'task_desc'    => 'required|min_length[10]|max_length[70]',
+      'task_desc'    => 'required|min_length[10]',
       'task_priority' => 'required|in_list[Baja,Normal,Alta]',
       'task_state' => 'required|in_list[Definida,En proceso,Completada]',
       'task_expiry'    => 'required|valid_date',
