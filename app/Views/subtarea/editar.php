@@ -16,7 +16,7 @@
         <label for="subtaskDesc" class="form-label">Descripcion:</label>
         <input type="text" name="subtaskDesc" id="subtaskDesc" class="form-control <?= session('errors.subtaskDesc') ? 'is-invalid' : '' ?>" value="<?= $subtask['subtask_desc'] ?>" required><br>
         <div class="invalid-feedback">
-          <?= session('errors.subtaskDesc') ?? '' ?>
+          <?= str_replace("subtaskDesc","descripcion",session('errors.subtaskDesc')) ?? '' ?>
         </div>
       </div>
 
@@ -29,7 +29,7 @@
             <option value="Completada" <?= $subtask['subtask_state'] === 'Completada' ? 'selected' : '' ?>>Completada</option>
           </select>
           <div class="invalid-feedback">
-            <?= session('errors.subtaskState') ?? '' ?>
+            <?= str_replace("subtaskState","estado",session('errors.subtaskState')) ?? '' ?>
           </div>
         </div>
             
@@ -41,7 +41,7 @@
               <option value="Alta" <?=  $subtask['subtask_priority'] === 'alta' ? 'selected' : '' ?>>Alta</option>
             </select>
             <div class="invalid-feedback">
-              <?= session('errors.subtaskPriority') ?? '' ?>
+              <?= str_replace("taskPriority","prioridad",session('errors.taskPriority')) ?? '' ?>
             </div>
           </div>
         </div>
@@ -50,17 +50,10 @@
           <label for="subtaskExpiry" class="form-label">Fecha limite:</label>
           <input type="datetime-local" min="<?= date('Y-m-d') ?>" name="subtaskExpiry" id="subtaskExpiry" class="form-control <?= session('errors.subtaskExpiry') ? 'is-invalid' : '' ?>" value="<?= $subtask['subtask_expiry'] ?>"><br>
           <div class="invalid-feedback">
-            <?= session('errors.subtaskExpiry') ?? '' ?>
+            <?= str_replace("subtaskExpiry","fecha limite",session('errors.subtaskExpiry')) ?? '' ?>
           </div>
         </div>
 
-        <div class="mb-3">
-          <label for="subtaskComment" class="form-label">Comentario:</label>
-          <input type="text" name="subtaskComment" id="subtaskComment" class="form-control <?= session('errors.subtaskComment') ? 'is-invalid' : '' ?>" value="<?= $subtask['subtask_comment'] ?>" required><br>
-          <div class="invalid-feedback">
-            <?= session('errors.subtaskComment') ?? '' ?>
-          </div>
-        </div>
 
         <div class="mb-3">
           <label for="subtaskResponsible" class="form-label">Responsable:</label>
@@ -96,7 +89,7 @@
               <option value="Completada" <?= $subtask['subtask_state'] === 'Completada' ? 'selected' : '' ?>>Completada</option>
             </select>
             <div class="invalid-feedback">
-              <?= session('errors.subtaskState') ?? '' ?>
+              <?= str_replace("subtaskState","estado",session('errors.subtaskState')) ?? '' ?>
             </div>
           </div>
             
