@@ -113,7 +113,6 @@
         'subtaskPriority' => 'permit_empty|in_list[Baja,Normal,Alta]',
         'subtaskState' => 'required|in_list[Definida,En proceso,Completada]',
         'subtaskExpiry'    => 'required|valid_date|future_date',
-        'subtaskComment' => 'permit_empty|min_length[5]',
         'user_id' => 'permit_empty',
       ]; 
 
@@ -126,7 +125,6 @@
           'subtask_state' => $estado,
           'subtask_priority' => $this->request->getPost('subtaskPriority'),
           'subtask_expiry' => $this->request->getPost('subtaskExpiry'),
-          'subtask_comment' => $this->request->getPost('subtaskComment'),
       ];
 
       $subtaskId = $this->request->getPost('subtask_id');
