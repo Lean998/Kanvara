@@ -153,7 +153,7 @@
     ?>
     <?php foreach ($tasks as $task): ?>
       <?php 
-          if (!empty($task['task_reminder']) && $task['task_reminder_read'] == 0 && date('Y-m-d', strtotime($task['task_reminder'])) == $hoy) {
+          if (!empty($task['task_reminder'])  && date('Y-m-d', strtotime($task['task_reminder'])) == $hoy) {
             $prontoVence[] = $task;
         }
       ?>
@@ -323,9 +323,9 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <?php if (session()->getFlashdata('error')): ?>
+          <?php if ($msg = session()->getFlashdata('error')): ?>
             <div class="alert alert-danger">
-              <?= esc(session()->getFlashdata('error')) ?>
+              <?= esc($msg) ?>
             </div>
           <?php endif; ?>
           <?= form_open('tareas/aceptar-invitacion') ?>
@@ -360,7 +360,7 @@
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     // Mostrar el modal si hay errores de validación
-    <?php if (session('errors')): ?>
+    <?php if ($msg = session()->getFlashdata('error')): ?>
       var myModal = new bootstrap.Modal(document.getElementById('newTask'));
       myModal.show();
 
@@ -390,8 +390,8 @@
 </script>
 <script src="<?= base_url('public/scripts/funcionesTarea.js') ?>"></script>
 <script>
-  <?php if (session('success')): ?>
-    mostrarMensaje('mensaje-success', <?= json_encode(session('success')) ?>, 'success');
+  <?php if ($msg = session()->getFlashdata('success')): ?>
+    mostrarMensaje('mensaje-success', <?= json_encode($msg) ?>, 'success');
   <?php endif ?>
 </script>
 <?= $this->endSection() ?>
