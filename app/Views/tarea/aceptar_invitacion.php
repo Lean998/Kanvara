@@ -18,9 +18,9 @@
                     <h2>Aceptar Invitación</h2>
                 </div>
                 <div class="card-body">
-                    <?php if (session()->getFlashdata('success')): ?>
+                    <?php if ($msg = session()->getFlashdata('success')): ?>
                         <div class="alert alert-success">
-                            <?= esc(session()->getFlashdata('success')) ?>
+                            <?= esc($msg) ?>
                         </div>
                     <?php endif; ?>
 
