@@ -1,8 +1,8 @@
 <?php 
   $sesion = session();
-  if (!$sesion->get("user_id")) {
-    return view("auth/login");
-  }
+    if (!$sesion->get("user_id")) {
+        return view("auth/login");
+    }
 ?>
 
 <?= $this->extend('plantilla/layout')?>
