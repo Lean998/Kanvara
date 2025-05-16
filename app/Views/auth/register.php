@@ -13,12 +13,12 @@
           <div class="card-body">
             <h2 class="card-title text-center mb-4">Registro de Usuarios</h2>
 
-            <?php if (session('success')): ?>
-              <p class="text-success text-center"><?= session('success') ?></p>
+            <?php if ($msg = session()->getFlashdata('success')): ?>
+              <p class="text-success text-center"><?= $msg ?></p>
             <?php endif; ?>
 
-            <?php if (session('error')): ?>
-              <p class="text-danger text-center"><?= session('error') ?></p>
+            <?php if ($msg = session()->getFlashdata('error')): ?>
+              <p class="text-danger text-center"><?= $msg ?></p>
             <?php endif; ?>
 
             <form action='user-up' method="post">
