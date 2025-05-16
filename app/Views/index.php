@@ -23,7 +23,7 @@
             <label for="taskTitle" class="form-label">Título:</label>
             <input type="text" name="taskTitle" id="taskTitle" class="form-control <?= session('errors.taskTitle') ? 'is-invalid' : '' ?>" value="<?= old('taskTitle') ?>" required>
             <div class="invalid-feedback">
-              <?= session('errors.taskTitle') ?? '' ?>
+              <?= str_replace("taskTitle","titulo",session('errors.taskTitle')) ?? '' ?>
             </div>
           </div>
 
@@ -31,7 +31,7 @@
             <label for="taskDesc" class="form-label">Descripción:</label>
             <input type="text" name="taskDesc" id="taskDesc" class="form-control <?= session('errors.taskDesc') ? 'is-invalid' : '' ?>" value="<?= old('taskDesc') ?>" required>
             <div class="invalid-feedback">
-              <?= session('errors.taskDesc') ?? '' ?>
+              <?= str_replace("taskDesc","descripcion",session('errors.taskDesc')) ?? '' ?>
             </div>
           </div>
           
@@ -45,7 +45,7 @@
                 <option value="Completada" <?= old('taskState') === 'Completada' ? 'selected' : '' ?>>Completada</option>
               </select>
               <div class="invalid-feedback">
-                <?= session('errors.taskState') ?? '' ?>
+                <?= str_replace("taskState","estado",session('errors.taskState')) ?? '' ?>
               </div>
             </div>
 
@@ -57,7 +57,7 @@
                 <option value="Alta" <?= old('taskPriority') === 'alta' ? 'selected' : '' ?>>Alta</option>
               </select>
               <div class="invalid-feedback">
-                <?= session('errors.taskPriority') ?? '' ?>
+                <?= str_replace("taskPriority","prioridad",session('errors.taskPriority')) ?? '' ?>
               </div>
             </div>
           </div>
@@ -74,7 +74,7 @@
                   <label for="taskReminderDate" class="form-label">Fecha del recordatorio:</label>
                   <input type="datetime-local" min="<?= date('Y-m-d') ?>" name="taskReminderDate" id="taskReminderDate" class="form-control <?= session('errors.taskReminderDate') ? 'is-invalid' : '' ?>" value="<?= old('taskReminderDate') ?>">
                   <div class="invalid-feedback">
-                    <?= session('errors.taskReminderDate') ?? '' ?>
+                    <?= str_replace("taskReminderDate","recordatorio",session('errors.taskReminderDate')) ?? '' ?>
                   </div>
                 </div>
               </div>
@@ -84,7 +84,7 @@
               <label for="taskExpiry" class="form-label">Fecha límite:</label>
               <input type="datetime-local" min="<?= date('Y-m-d') ?>" name="taskExpiry" id="taskExpiry" class="form-control <?= session('errors.taskExpiry') ? 'is-invalid' : '' ?>" value="<?= old('taskExpiry') ?>" required>
               <div class="invalid-feedback">
-                <?= session('errors.taskExpiry') ?? '' ?>
+                <?= str_replace("taskExpiry","fecha de expiracion",session('errors.taskExpiry')) ?? '' ?>
               </div>
             </div>
           </div>
@@ -93,13 +93,9 @@
             <label for="taskColor" class="form-label">Color de la Tarea:</label>
             <input type="color" name="taskColor" id="taskColor" class="form-control form-control-color <?= session('errors.taskColor') ? 'is-invalid' : '' ?>" value="<?= old('taskColor') ?>" required>
             <div class="invalid-feedback">
-              <?= session('errors.taskColor') ?? '' ?>
+              <?= str_replace("taskColor","color",session('errors.taskColor')) ?? '' ?>
             </div>
           </div>
-
-          <?php if (session('error')): ?>
-            <div class="alert alert-danger"><?= session('error') ?></div>
-          <?php endif; ?>
         </form>
       </div>
       <div class="modal-footer d-flex justify-content-end gap-2">
@@ -219,8 +215,8 @@
                 <?php if($task['user_id'] == session('user_id')): ?> 
                   <div class="btn-group flex-wrap mb-2 gap-2" role="group">
                     <button class="btn btn-editar btn-sm btn-outline-light" data-task-id="<?= $task['task_id'] ?>">✏️ Editar</button>
-                      <?php if (session('opcion') !== 'tareas/tareas-eliminadas' ): ?>
-                    <button class="btn btn-eliminar btn-sm btn-outline-light" data-task-id="<?= $task['task_id'] ?>">🗑️ Eliminar</button>
+                    <?php if (session('opcion') !== 'tareas/tareas-eliminadas' ): ?>
+                      <button class="btn btn-eliminar btn-sm btn-outline-light" data-task-id="<?= $task['task_id'] ?>">🗑️ Eliminar</button>
                     <?php endif; ?>
                     
                     <?php if (session('opcion') !== 'tareas/tareas-archivadas'): ?>
@@ -240,7 +236,10 @@
 
   <!-- Modal Confirmar Eliminar Tarea -->
   <div class="modal fade" id="confirmarEliminarModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+  <div class="modal-dialog modal-dialog-centered">
+    <form method="POST" action="<?= base_url('tareas/eliminar') ?>" id="formEliminarTarea">
+      <?= csrf_field() ?> 
+      <input type="hidden" name="task_id" id="taskIdAEliminar">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">¿Eliminar tarea?</h5>
@@ -251,11 +250,12 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button id="btnConfirmarEliminar" type="button" class="btn btn-danger">Eliminar</button>
+          <button type="submit" class="btn btn-danger">Eliminar</button>
         </div>
       </div>
-    </div>
+    </form>
   </div>
+</div>
 
   <!-- Modal Confirmar Finalizar Tarea -->
   <div class="modal fade" id="confirmarFinalizarModal" tabindex="-1" aria-hidden="true">
@@ -388,6 +388,7 @@
     checkbox.addEventListener('change', toggleReminderFields);
   });
 </script>
+<script src="<?= base_url('public/scripts/globales.js') ?>"></script>
 <script src="<?= base_url('public/scripts/funcionesTarea.js') ?>"></script>
 <script>
   <?php if ($msg = session()->getFlashdata('success')): ?>
