@@ -26,7 +26,10 @@ class Home extends BaseController {
       'subtitulo' => 'Tus tareas',
       'tasks' => $tasks
     ];
-      
+    $sesion = session();
+    if (!$sesion->get("user_id")) {
+      return view("auth/login");
+    }
     session()->set('opcion', '');
     return view('index', $data);
     }
