@@ -16,6 +16,11 @@
         return view('errors/html/error_404', ['message' => 'Ocurrio un error al mostrar la tarea o la tarea no existe.']);
       }
 
+      $sesion = session();
+      if (!$sesion->get("user_id")) {
+          return redirect()->to(base_url('auth/login'))->with('success', 'Colaborador eliminado correctamente.');
+      }
+
       $collab = new CollaborationModel();
       $data = [
         'titulo' => 'Tarea',
