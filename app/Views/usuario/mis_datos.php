@@ -17,7 +17,7 @@ $sesion = session();
         <label for="user_name" class="form-label">Nombre</label>
         <input type="text" name="username" class="form-control <?= session('errors.username') ? 'is-invalid' : '' ?>" id="user_name" value="<?= esc($usuario['user_name']) ?>">
         <div class="invalid-feedback">
-          <?= session('errors.username') ?? '' ?>
+          <?= str_replace("username","usuario",session('errors.username')) ?? '' ?>
         </div>
       </div>
 
@@ -25,7 +25,7 @@ $sesion = session();
         <label for="user_email" class="form-label">Email</label>
         <input type="email" name="user_email" class="form-control <?= session('errors.user_email') ? 'is-invalid' : '' ?>" id="user_email" value="<?= esc($usuario['user_email']) ?>">
         <div class="invalid-feedback">
-          <?= session('errors.user_email') ?? '' ?>
+          <?= str_replace("user_email","correo",session('errors.user_email')) ?? '' ?>
         </div>
       </div>
 
