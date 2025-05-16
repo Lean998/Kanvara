@@ -1,4 +1,9 @@
-
+<?php 
+$sesion = session();
+    if (!$sesion->get("user_id")) {
+        return view("auth/login");
+    }
+?>
 <!-- Button trigger modal -->
 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newTask">
   Nueva Tarea
@@ -9,7 +14,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="newTaskLabel">Modal title</h1>
+        <h1 class="modal-title fs-5" id="newTaskLabel">Nueva tarea</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
