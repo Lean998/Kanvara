@@ -1,6 +1,6 @@
 <?php 
   $sesion = session();
-  if(!isset($_SESSION['user_id']) OR !$sesion->get("user_id")){
+  if (!$sesion->get("user_id")) {
     return view("auth/login");
   }
 ?>
@@ -110,9 +110,12 @@
   </div>
 </div>
 
+
+
 <?= $this->endSection() ?>
 <?= $this->section('contenido') ?>
 
+  
   <!-- Contenedor Ordenar Tareas -->
   <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center my-2 gap-3">
     <h2 class="text-center text-md-start mb-0"><?= $subtitulo?></h2>
@@ -140,11 +143,20 @@
     <div id="mensaje-tareas" class="alert d-none" role="alert"></div>          
   </div>
 
+
   <!-- Contenedor Tareas -->
   <div class="container bg-dark p-3 text-light rounded-3">
     <?php if (!empty($tasks)): ?>
+    <?php  
+      $prontoVence = []; 
+      $hoy = date('Y-m-d', strtotime('+1 day'));
+    ?>
     <?php foreach ($tasks as $task): ?>
-    
+      <?php 
+          if (!empty($task['task_reminder']) && $task['task_reminder_read'] == 0 && date('Y-m-d', strtotime($task['task_reminder'])) == $hoy) {
+            $prontoVence[] = $task;
+        }
+      ?>
       <div class="card mb-3 text-light rounded-3" style="background-color:<?= $task['task_color'] ?>">
         <div class="row g-3 p-3">
             <!-- Sección del título y descripción -->
@@ -332,6 +344,18 @@
       </div>
     </div>
   </div>
+
+<?php if (!empty($prontoVence)): ?>
+  <div class="alert alert-warning alert-dismissible fade show m-0 rounded-0 text-dark align-center container-fluid " role="alert" style="position: fixed; top: 7%; left: 0; right: 0;">
+    <strong>¡Atención!</strong> Tienes <?= count($prontoVence) ?> tarea<?= count($prontoVence) > 1 ? 's' : '' ?> que vence<?= count($prontoVence) > 1 ? 'n' : '' ?> pronto:
+    <ul class="mb-0">
+      <?php foreach ($prontoVence as $t): ?>
+        <li><?= htmlspecialchars($t['task_title']) ?> (<?= date('d/m/Y', strtotime($t['task_reminder'])) ?>)</li>
+      <?php endforeach; ?>
+    </ul>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+  </div>
+<?php endif; ?>  
 
 <script>
   document.addEventListener('DOMContentLoaded', function () {
