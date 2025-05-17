@@ -47,7 +47,7 @@ Desarrollado con [CodeIgniter 4](https://codeigniter.com/), un framework PHP lig
    database.default.password = tu_contraseña
    ```
 
-5. **Importar la Base de Datos
+5. **Importar la Base de Datos**
 
 Importá el archivo `kanvara.sql` que se encuentra en la carpeta database en tu gestor de base de datos (como phpMyAdmin, Adminer, o consola MySQL) para crear las tablas necesarias del sistema.
 
