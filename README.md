@@ -1,74 +1,84 @@
+# 🚀 Kanvara
 
-                                                                                                                                
-# CodeIgniter 4 Application Starter
+Proyecto integrador de la materia **Técnicas y Herramientas para el Desarrollo Web con Calidad**.
 
-## What is CodeIgniter?
+Desarrollado con [CodeIgniter 4](https://codeigniter.com/), un framework PHP ligero, rápido y seguro.
 
-CodeIgniter is a PHP full-stack web framework that is light, fast, flexible and secure.
-More information can be found at the [official site](https://codeigniter.com).
+---
 
-This repository holds a composer-installable app starter.
-It has been built from the
-[development repository](https://github.com/codeigniter4/CodeIgniter4).
+## 📦 Requisitos
 
-More information about the plans for version 4 can be found in [CodeIgniter 4](https://forum.codeigniter.com/forumdisplay.php?fid=28) on the forums.
+- PHP 8.1 o superior
+- Composer instalado ([https://getcomposer.org/](https://getcomposer.org/))
+- Servidor web (Apache, Nginx o el servidor embebido de PHP)
 
-You can read the [user guide](https://codeigniter.com/user_guide/)
-corresponding to the latest version of the framework.
+---
 
-## Installation & updates
+## 🔧 Instalación del Proyecto
 
-`composer create-project codeigniter4/appstarter` then `composer update` whenever
-there is a new release of the framework.
+1. **Clonar el repositorio o copiar los archivos del proyecto**
 
-When updating, check the release notes to see if there are any changes you might need to apply
-to your `app` folder. The affected files can be copied or merged from
-`vendor/codeigniter4/framework/app`.
+   No es necesario incluir las carpetas `vendor/` ni `system/`, ya que se generan automáticamente con Composer.
 
-## Setup
+2. **Instalar las dependencias del proyecto**
 
-Copy `env` to `.env` and tailor for your app, specifically the baseURL
-and any database settings.
+   Desde la terminal, en la raíz del proyecto, ejecutar:
 
-## Important Change with index.php
+   ```bash
+   composer install
+   ```
 
-`index.php` is no longer in the root of the project! It has been moved inside the *public* folder,
-for better security and separation of components.
+   > Esto descargará todas las librerías necesarias, incluyendo el core de CodeIgniter en `vendor/codeigniter4/framework/system`.
 
-This means that you should configure your web server to "point" to your project's *public* folder, and
-not to the project root. A better practice would be to configure a virtual host to point there. A poor practice would be to point your web server to the project root and expect to enter *public/...*, as the rest of your logic and the
-framework are exposed.
+3. **Copiar el archivo de entorno**
 
-**Please** read the user guide for a better explanation of how CI4 works!
+   copiar el archivo `.env`:
 
-## Repository Management
+4. **Configurar variables de entorno**
 
-We use GitHub issues, in our main repository, to track **BUGS** and to track approved **DEVELOPMENT** work packages.
-We use our [forum](http://forum.codeigniter.com) to provide SUPPORT and to discuss
-FEATURE REQUESTS.
+   Editar el archivo `.env` y modificar al menos las siguientes variables:
 
-This repository is a "distribution" one, built by our release preparation script.
-Problems with it can be raised on our forum, or as issues in the main repository.
+   ```dotenv
+   app.baseURL = 'http://localhost:8080/'
 
-## Server Requirements
+   database.default.hostname = localhost
+   database.default.database = nombre_de_tu_base_de_datos
+   database.default.username = tu_usuario
+   database.default.password = tu_contraseña
+   ```
 
-PHP version 8.1 or higher is required, with the following extensions installed:
+5. **Importar la Base de Datos**
 
-- [intl](http://php.net/manual/en/intl.requirements.php)
-- [mbstring](http://php.net/manual/en/mbstring.installation.php)
+Importá el archivo `kanvara.sql` que se encuentra en la carpeta database en tu gestor de base de datos (como phpMyAdmin, Adminer, o consola MySQL) para crear las tablas necesarias del sistema.
 
-> [!WARNING]
-> - The end of life date for PHP 7.4 was November 28, 2022.
-> - The end of life date for PHP 8.0 was November 26, 2023.
-> - If you are still using PHP 7.4 or 8.0, you should upgrade immediately.
-> - The end of life date for PHP 8.1 will be December 31, 2025.
 
-Additionally, make sure that the following extensions are enabled in your PHP:
+---
 
-- json (enabled by default - don't turn it off)
-- [mysqlnd](http://php.net/manual/en/mysqlnd.install.php) if you plan to use MySQL
-- [libcurl](http://php.net/manual/en/curl.requirements.php) if you plan to use the HTTP\CURLRequest library
-=======
-# Kanvara
-Practico integrador de la materia Técnicas y Herramientas para el desarrollo Web con calidad
+## 📁 Estructura del Proyecto
 
+- `app/` → Lógica de la aplicación (controladores, modelos, vistas, etc.)
+- `public/` → Carpeta raíz pública del servidor
+- `writable/` → Archivos generados en tiempo de ejecución (logs, caché, etc.)
+- `vendor/` → **No viene incluida, se genera con `composer install`**
+- `system/` → Incluida automáticamente desde `vendor/codeigniter4/framework/system`
+
+---
+
+## 🛠️ Herramientas usadas
+
+- PHP 8.1+
+- CodeIgniter 4.x
+- Composer
+- Bootstrap (si aplica)
+
+---
+
+## 🧠 Notas importantes
+
+- **No edites directamente archivos dentro de `vendor/` o `system/`**. Si necesitás extender funcionalidad, usá la carpeta `app/`.
+
+---
+
+## 👤 Autor
+
+Leandro Agüero – Proyecto académico – Universidad Nacional de San Luis
