@@ -40,7 +40,7 @@
         ->where('subtask_deleted_at IS NULL')
         ->findAll();
 
-        $collaborationSubtaskModel = new CollaborationSubtaskModel();
+        $collaborationSubtaskModel = new collaborationSubtaskModel();
         $commentsModel = new CommentsModel();
         foreach ($subtaks as $index => $subtak) {
           $subtaks[$index]['colaboradores'] = $collaborationSubtaskModel->getColaboradores($subtak['subtask_id']);
@@ -59,7 +59,7 @@
       ->where('subtask_deleted_at IS NULL')
       ->where('subtask_id', $subtaskId)
       ->first();
-      $collaborationSubtaskModel = new CollaborationSubtaskModel();
+      $collaborationSubtaskModel = new collaborationSubtaskModel();
       $commentsModel = new CommentsModel();
       $subtask['colaboradores'] = $collaborationSubtaskModel->getColaboradores($subtask['subtask_id']);
       $subtask['comentarios'] = $commentsModel->getComentariosSubtarea($subtask['subtask_id']);
