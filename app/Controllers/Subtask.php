@@ -1,7 +1,7 @@
 <?php
   namespace App\Controllers;
   use App\Models\CollaborationModel;
-  use App\Models\collaborationSubtaskModel;
+  use App\Models\CollaborationSubtaskModel;
   use App\Models\SubTaskModel;
   use App\Models\CommentsModel;
   use App\Models\TaskModel;
@@ -61,7 +61,7 @@
       return redirect()->to(base_url() . 'tareas/ver/'.$taskId)->with('success', 'Subtarea creada correctamente.');
     }
     public function postEliminarColaborador(){
-      $collaborationSubtaskModel = new collaborationSubtaskModel();
+      $collaborationSubtaskModel = new CollaborationSubtaskModel();
       $colaborador = $this->request->getPost('id');
       if(!$collaborationSubtaskModel->where('user_id', $colaborador)->delete()){
         return redirect()->back()->with('error', 'Ocurrio un errro al eliminar al colaborador.');
@@ -208,7 +208,7 @@
       return view('subtarea/agregar_colaborador', $data);
     }
     public function postAgregarColaborador(){
-      $colaborationSubtaskModel = new collaborationSubtaskModel();
+      $colaborationSubtaskModel = new CollaborationSubtaskModel();
       $userColaborator = $this->request->getPost('subtaskResponsible');
       $subtaskId = $this->request->getPost('subtask_id');
       $taskId = $this->request->getPost('task_id');

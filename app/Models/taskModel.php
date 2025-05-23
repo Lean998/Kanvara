@@ -45,7 +45,7 @@
 
       $subTaskModel = new SubTaskModel();
       $collaborationModel = new CollaborationModel();
-      $collaborationSubtaskModel = new collaborationSubtaskModel();
+      $collaborationSubtaskModel = new CollaborationSubtaskModel();
       $task['subtasks'] = $subTaskModel->obtenerSubtareas($tareaId); 
       if ($task['subtasks']) {
         foreach ($task['subtasks'] as &$subtask) { 

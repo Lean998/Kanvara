@@ -1,7 +1,7 @@
 <?php
   namespace App\Models;
   use CodeIgniter\Model;
-  class collaborationSubtaskModel extends Model {
+  class CollaborationSubtaskModel extends Model {
     protected $table = 'collaborations_subtask';
     protected $primaryKey = 'collaboration_subtask_id';
     protected $useAutoIncrement = true;
